@@ -8,7 +8,9 @@
     <string name="title_activity_start_day">StartDayActivity</string>
     <string name="start_working_day">Start Working Day</string>
     <string name="driver">Driver:</string>
-    <string name="title_activity_pending_jobs">PendingJobsActivity</string>
+    <string name="title_activity_pending_jobs">Available Jobs</string>
+    <string name="title_activity_end_day">Day Summary</string>
+    <string name="title_activity_job_details">JobDetailsActivity</string>
     <string name="title_section1">Section 1</string>
     <string name="title_section2">Section 2</string>
     <string name="title_section3">Section 3</string>

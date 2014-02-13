@@ -18,6 +18,7 @@ public class UsersDBAdapter {
 	public static final String LAST_LOGGED_IN = "last_logged_in";
 	public static final String AVAILABLE = "available";
 	public static final String SYNCED = "synced";
+	public static final String DRIVER_ID = "driver_id";
 	
 	private static final String DATABASE_TABLE = "users";
 	
@@ -60,7 +61,7 @@ public class UsersDBAdapter {
 	}
 	
 	//Create a new user. Return rowId if create successful. Otherwise return -1.
-	public long createUser(String first_name, String last_name, String email, String telephone, String last_logged_in, String available, String synced){
+	public long createUser(String first_name, String last_name, String email, String telephone, String last_logged_in, String available, String synced, String driver_id){
 		ContentValues initialValues = new ContentValues();
 		initialValues.put(FIRST_NAME, first_name);
 		initialValues.put(LAST_NAME, last_name);
@@ -69,6 +70,7 @@ public class UsersDBAdapter {
 		initialValues.put(LAST_LOGGED_IN, last_logged_in);
 		initialValues.put(AVAILABLE, available);
 		initialValues.put(SYNCED, "No");
+		initialValues.put(DRIVER_ID, driver_id);
 		
 		return this.mDb.insert(DATABASE_TABLE, null, initialValues);
 	}
@@ -84,13 +86,13 @@ public class UsersDBAdapter {
 	
 	//Return cursor of all users
 	public Cursor getAllUsers(){
-		return this.mDb.query(DATABASE_TABLE, new String[] {ROW_ID, FIRST_NAME, LAST_NAME, EMAIL, TELEPHONE, LAST_LOGGED_IN, AVAILABLE, SYNCED},
+		return this.mDb.query(DATABASE_TABLE, new String[] {ROW_ID, FIRST_NAME, LAST_NAME, EMAIL, TELEPHONE, LAST_LOGGED_IN, AVAILABLE, SYNCED, DRIVER_ID},
 				null,null,null,null,null);
 	}
 	
 	//Return cursor of selected user
 	public Cursor getUser(long rowId) throws SQLException {
-		Cursor mCursor = this.mDb.query(true, DATABASE_TABLE, new String[] {ROW_ID, FIRST_NAME, LAST_NAME, EMAIL, TELEPHONE, LAST_LOGGED_IN, AVAILABLE, SYNCED},
+		Cursor mCursor = this.mDb.query(true, DATABASE_TABLE, new String[] {ROW_ID, FIRST_NAME, LAST_NAME, EMAIL, TELEPHONE, LAST_LOGGED_IN, AVAILABLE, SYNCED, DRIVER_ID},
 					ROW_ID + "=" + rowId,
 					null,null,null,null,null);
 		
@@ -101,7 +103,7 @@ public class UsersDBAdapter {
 	}
 	
 	//Update user record.
-	public boolean updateUser(long rowId, String first_name, String last_name, String email, String telephone, String last_logged_in, String available, String synced){
+	public boolean updateUser(long rowId, String first_name, String last_name, String email, String telephone, String last_logged_in, String available, String synced, String driver_id){
 		ContentValues args = new ContentValues();
 		args.put(FIRST_NAME, first_name);
 		args.put(LAST_NAME, last_name);
@@ -110,18 +112,19 @@ public class UsersDBAdapter {
 		args.put(LAST_LOGGED_IN, last_logged_in);
 		args.put(AVAILABLE, available);
 		args.put(SYNCED, synced);
+		args.put(DRIVER_ID, driver_id);
 		
 		return this.mDb.update(DATABASE_TABLE, args, ROW_ID + "=" + rowId, null) > 0;
 	}
 	
-	//Update user availability.
-	public boolean updateUserAvailability(String email, String available){
-		Log.i("Update User - ", email + " : " + available);
-		ContentValues values = new ContentValues();
-		values.put(AVAILABLE, available);
-		this.mDb.update(DATABASE_TABLE, values, EMAIL + "= '" + email + "'", null);
-		return true; 
+	public boolean updateUserRecord(String column, String value, String driver_id){
+		ContentValues args = new ContentValues();
+		args.put(column.toUpperCase(), value);
+		this.mDb.update(DATABASE_TABLE, args, DRIVER_ID + "= '" + driver_id + "'", null);
+		return true;
 	}
+	
+
 }
 
 

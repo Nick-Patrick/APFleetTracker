@@ -1,6 +1,12 @@
 package com.aphaulage.apfleettracker;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -237,6 +243,9 @@ public class LoginActivity extends Activity {
 			LoginJson jsonResults = new LoginJson();
 			if(jsonResults.getSuccessful() == true){
 				UsersDBAdapter userDB = new UsersDBAdapter(getApplicationContext());
+				
+				Log.i("Driver",LoginJson.driverId);
+				
 				userDB.open();
 				String available = "Inactive";
 				Time now = new Time();
@@ -249,7 +258,8 @@ public class LoginActivity extends Activity {
 							LoginJson.jObject.getString("telephone"), 
 							now.toString(),
 							available,
-							"No"
+							"No",
+							LoginJson.driverId
 						);
 					userDB.close();
 					finish();

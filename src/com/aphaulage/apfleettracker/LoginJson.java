@@ -30,6 +30,8 @@ public class LoginJson {
 	static String jsonString = "";
 	private String userKey = "9c36c7108a73324100bc9305f581979071d45ee9";
 	
+	static public String driverId = "";
+	
 	private static Boolean successful = false;
 
 	
@@ -43,15 +45,21 @@ public class LoginJson {
 		params.add(new BasicNameValuePair("key", userKey));
 		
 		JSONObject jsonObject = null;
+		JSONObject jsonDriverObject = null;
 		String jsonValue = "";
 
 		try {
-			//Send email + password to PHP service. Return user details into jsonObject.
-			//jsonObject = getJsonFromUrl("http://10.0.2.2:80/aphaulage_app/php/api/loginUser.php", params);
 			jsonObject = getJsonFromUrl("http://aphaulage.co.uk/apTracker/users/driversByEmailPassword.json", params);
 			Log.i("jsonObject123", jsonObject.toString());
 			jsonValue = jsonObject.getString("username");
 			Log.i("jsonValue123", jsonValue);
+			List<NameValuePair> paramEmail = new ArrayList<NameValuePair>();
+			paramEmail.add(new BasicNameValuePair("email", jsonValue));
+			paramEmail.add(new BasicNameValuePair("key", "9c36c7108a73324100bc9305f581979071d45ee9"));
+			jsonDriverObject = getJsonFromUrl("http://aphaulage.co.uk/apTracker/drivers/driversByEmail.json", paramEmail);
+			Log.i("jsonDriverObject",jsonDriverObject.toString());
+			driverId = jsonDriverObject.getString("email");
+			Log.i("driverId",driverId);
 		}
 		catch (Exception e){
 			e.printStackTrace();

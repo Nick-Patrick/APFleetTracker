@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pending_jobs_available_jobs">Available Job</string>
+    <string name="jobs_assigned_to">Job Assigned To: </string>
+    <string name="pending_jobs_job_label">JOB</string>
+    <string name="pending_jobs_collection_label">COLLECTION POINT</string>
+    <string name="pending_jobs_dropoff_label">DROPOFF POINT</string>
+    <string name="pending_jobs_vehicle_label">VEHICLE</string>
+    <string name="pending_jobs_packages_label">PACKAGES</string>
+    <string name="pending_jobs_additional_details_label">ADDITIONAL DETAILS</string>
+    <string name="pending_jobs_assigned_by_label">ASSIGNED BY</string>
+    <string name="pending_jobs_assigned_at_label">ASSIGNED</string>
+    <string name="pending_jobs_button_accept_job">START JOB</string>
+</resources>

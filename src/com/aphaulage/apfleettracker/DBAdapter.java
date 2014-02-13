@@ -20,9 +20,79 @@ public class DBAdapter {
 				+ UsersDBAdapter.TELEPHONE + " TEXT,"
 				+ UsersDBAdapter.LAST_LOGGED_IN + " TEXT,"
 				+ UsersDBAdapter.AVAILABLE + " TEXT,"
-				+ UsersDBAdapter.SYNCED + " TEXT"
+				+ UsersDBAdapter.SYNCED + " TEXT," 
+				+ UsersDBAdapter.DRIVER_ID + " TEXT"
 				+ ");"
 			;
+	
+	private static final String CREATE_TABLE_JOBS = 
+			"create table jobs (id primary key,"
+			+ JobsDBAdapter.NAME + " TEXT,"
+			+ JobsDBAdapter.COLLECTION_ID + " TEXT,"
+			+ JobsDBAdapter.DROPOFF_ID + " TEXT,"
+			+ JobsDBAdapter.STATUS + " TEXT,"
+			+ JobsDBAdapter.COMPLETED_DATE + " TEXT,"
+			+ JobsDBAdapter.CREATED + " TEXT,"
+			+ JobsDBAdapter.MODIFIED + " TEXT,"
+			+ JobsDBAdapter.ADDITIONAL_DETAILS + " TEXT,"
+			+ JobsDBAdapter.DUE_DATE + " TEXT,"
+			+ JobsDBAdapter.VEHICLE_ID + " TEXT,"
+			+ JobsDBAdapter.SYNCED + " TEXT,"
+			+ JobsDBAdapter.CREATED_BY + " TEXT"
+			+ ");"
+		;
+
+	private static final String CREATE_TABLE_LOCATIONS = 
+			"create table locations (id primary key,"
+			+ LocationsDBAdapter.NAME + " TEXT,"
+			+ LocationsDBAdapter.ADDRESS1 + " TEXT,"
+			+ LocationsDBAdapter.ADDRESS2 + " TEXT,"
+			+ LocationsDBAdapter.ADDRESS3 + " TEXT,"
+			+ LocationsDBAdapter.TOWN + " TEXT,"
+			+ LocationsDBAdapter.COUNTY + " TEXT,"
+			+ LocationsDBAdapter.POSTCODE + " TEXT,"
+			+ LocationsDBAdapter.LOCATION_OPENING_TIMES_ID + " TEXT,"
+			+ LocationsDBAdapter.TELEPHONE + " TEXT,"
+			+ LocationsDBAdapter.CREATED + " TEXT,"
+			+ LocationsDBAdapter.MODIFIED + " TEXT"
+			+ ");"
+		;
+	
+	private static final String CREATE_TABLE_VEHICLES = 
+			"create table vehicles (id primary key,"
+			+ VehiclesDBAdapter.NAME + " TEXT,"
+			+ VehiclesDBAdapter.REG_NUMBER + " TEXT,"
+			+ VehiclesDBAdapter.DESCRIPTION + " TEXT,"
+			+ VehiclesDBAdapter.AVAILABLE + " TEXT,"
+			+ VehiclesDBAdapter.STATUS + " TEXT,"
+			+ VehiclesDBAdapter.SYNCED + " TEXT,"
+			+ VehiclesDBAdapter.MODIFIED + " TEXT"
+			+ ");"
+		;
+	
+	private static final String CREATE_TABLE_PACKAGES = 
+			"create table packages (id primary key," 
+			+ PackagesDBAdapter.NAME + " TEXT,"
+			+ PackagesDBAdapter.LENGTH + " TEXT,"
+			+ PackagesDBAdapter.WIDTH + " TEXT," 
+			+ PackagesDBAdapter.HEIGHT + " TEXT,"
+			+ PackagesDBAdapter.WEIGHT + " TEXT,"
+			+ PackagesDBAdapter.SPECIAL_REQS + " TEXT"
+			+ ");"
+		;
+
+	private static final String CREATE_TABLE_JOB_PACKAGES = 
+			"create table job_packages (id primary key,"
+			+ JobPackagesDBAdapter.JOB_ID + " TEXT,"
+			+ JobPackagesDBAdapter.PACKAGE_ID + " TEXT,"
+			+ JobPackagesDBAdapter.NOTES + " TEXT,"
+			+ JobPackagesDBAdapter.STATUS + " TEXT,"
+			+ JobPackagesDBAdapter.MODIFIED + " TEXT," 
+			+ JobPackagesDBAdapter.SYNCED + " TEXT"
+			+ ");"
+		;
+
+
 	
 	private final Context context;
 	private DatabaseHelper DBHelper;
@@ -43,6 +113,11 @@ public class DBAdapter {
 		@Override
 		public void onCreate(SQLiteDatabase db){
 			db.execSQL(CREATE_TABLE_USERS);
+			db.execSQL(CREATE_TABLE_JOBS);
+			db.execSQL(CREATE_TABLE_LOCATIONS);
+			db.execSQL(CREATE_TABLE_VEHICLES);
+			db.execSQL(CREATE_TABLE_PACKAGES);
+			db.execSQL(CREATE_TABLE_JOB_PACKAGES);
 		}
 		
 		@Override

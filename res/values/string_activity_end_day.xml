@@ -1,0 +1,7 @@
+<resources>
+
+    <string name="activity_end_day_title">Day Summary</string>
+    <string name="sync">Sync</string>
+    <string name="day_end">Day Finished. Good Work.</string>
+
+</resources>

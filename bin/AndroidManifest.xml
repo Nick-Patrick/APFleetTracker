@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.aphaulage.apfleettracker"
     android:versionCode="1"
@@ -43,6 +43,31 @@
             android:name="com.aphaulage.apfleettracker.PendingJobsActivity"
             android:label="@string/title_activity_pending_jobs" >
         </activity>
+        <activity
+            android:name="com.aphaulage.apfleettracker.EndDayActivity"
+            android:label="@string/title_activity_end_day" >
+        </activity>
+        <activity android:name=".JobDetailsActivity"
+            android:label="@string/title_activity_job_details"
+            android:parentActivityName="com.aphaulage.apfleettracker.PendingJobsActivity">
+            <meta-data android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.aphaulage.apfleettracker.PendingJobsActivity" />
+        </activity>
     </application>
 
 </manifest>
+
+<!-- 
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <application>
+        <activity android:name=".JobDetailsActivity"
+            android:label="@string/title_activity_job_details"
+            android:parentActivityName="com.aphaulage.apfleettracker.PendingJobsActivity">
+            <meta-data android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.aphaulage.apfleettracker.PendingJobsActivity" />
+        </activity>
+    </application>
+
+</manifest>
+ -->

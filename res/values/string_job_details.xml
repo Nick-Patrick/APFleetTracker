@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="job_details_job_title">Job</string>
+	<string name="job_details_collection_title">Collection</string>
+	<string name="job_details_dropoff_title">Dropoff</string>
+	<string name="job_details_vehicle_title">Vehicle</string>
+	
+	<string name="job_details_job_name_label">JOB NAME</string>
+	<string name="job_details_job_due_by_label">DUE BY</string>
+	<string name="job_details_job_created_by_label">CREATED BY</string>
+	<string name="job_details_job_additional_details_label">ADDITIONAL DETAILS</string>
+	
+	<string name="job_details_collection_name_label">COLLECTION POINT</string>
+	<string name="job_details_collection_address_label">ADDRESS</string>
+	<string name="job_details_collection_town_label">TOWN</string>
+	<string name="job_details_collection_county_label">COUNTY</string>
+	<string name="job_details_collection_telephone_label">TELEPHONE</string>
+	<string name="job_details_collection_postcode_label">POSTCODE</string>
+	
+	<string name="job_details_dropoff_name_label">DROPOFF POINT</string>
+	<string name="job_details_dropoff_address_label">ADDRESS</string>
+	<string name="job_details_dropoff_town_label">TOWN</string>
+	<string name="job_details_dropoff_county_label">COUNTY</string>
+	<string name="job_details_dropoff_telephone_label">TELEPHONE</string>
+	<string name="job_details_dropoff_postcode_label">POSTCODE</string>
+	
+	<string name="job_details_vehicle_name_label">VEHICLE NAME</string>
+	<string name="job_details_vehicle_reg_number_label">REGISTRATION NO</string>
+	
+	<string name="job_details_package_name_label">PACKAGE NAME</string>
+	<string name="job_details_package_width_label">WIDTH</string>
+	<string name="job_details_package_length_label">LENGTH</string>
+	<string name="job_details_package_height_label">HEIGHT</string>
+	<string name="job_details_package_weight_label">WEIGHT</string>
+	<string name="job_details_package_special_reqs_label">SPECIAL REQS</string>
+	
+	<string name="job_details_view_map_button">MAP</string>
+</resources>
