@@ -6,7 +6,9 @@
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_splash">SplashActivity</string>
     <string name="title_activity_start_day">StartDayActivity</string>
-    <string name="start_working_day">Start Working Day</string>
+    <string name="start_day_active_jobs">Active Job</string>
+    <string name="start_day_pending_jobs">Pending Jobs</string>
+    <string name="start_day_completed_jobs">Completed Jobs</string>
     <string name="driver">Driver:</string>
     <string name="title_activity_pending_jobs">Available Jobs</string>
     <string name="title_activity_end_day">Day Summary</string>
@@ -14,5 +16,6 @@
     <string name="title_section1">Section 1</string>
     <string name="title_section2">Section 2</string>
     <string name="title_section3">Section 3</string>
+    <string name="title_activity_collection_details_map">Collection Map</string>
 
 </resources>

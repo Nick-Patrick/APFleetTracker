@@ -107,13 +107,20 @@
 	        android:layout_height="wrap_content" 
 	        android:textAppearance="?android:attr/textAppearanceLarge" 
 	        android:layout_marginBottom="14dp" />
-	        
+	                   
+        <Button
+        android:id="@+id/pending_jobs_more_details"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/pending_jobs_button_more_details" />
         
         <TextView
 	        android:id="@+id/due_by"
 	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
 	        android:textAppearance="?android:attr/textAppearanceSmall" />
+        
+
 
         <LinearLayout
             android:layout_width="match_parent"

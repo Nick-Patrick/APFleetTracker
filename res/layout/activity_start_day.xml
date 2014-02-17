@@ -53,16 +53,35 @@
         android:text="Completed Jobs: " 
         android:textAppearance="?android:attr/textAppearanceLarge" />
         
-
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent" >
+
         <Button
-        	android:id="@+id/startDayButton"
-        	android:layout_width="match_parent"
-        	android:layout_height="wrap_content"
-        	android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-        	android:text="@string/start_working_day" />
-	</RelativeLayout>
+            android:id="@+id/completed_jobs_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:text="@string/start_day_completed_jobs" />
+
+        <Button
+            android:id="@+id/active_job_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/completed_jobs_button"
+            android:layout_alignParentLeft="true"
+            android:layout_marginBottom="48dp"
+            android:text="@string/start_day_active_jobs" />
+
+        <Button
+            android:id="@+id/pending_jobs_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/completed_jobs_button"
+            android:layout_alignParentLeft="true"
+            android:text="@string/start_day_pending_jobs" />
+
+    </RelativeLayout>
+
 </LinearLayout>

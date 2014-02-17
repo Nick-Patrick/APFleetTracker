@@ -251,6 +251,7 @@ public class LoginActivity extends Activity {
 				Time now = new Time();
 				now.setToNow();
 				try{
+					Log.i("LoginActivity - jObject", LoginJson.jObject.toString());
 					userDB.createUser(
 							LoginJson.jObject.getString("first_name"),
 							LoginJson.jObject.getString("last_name"), 
@@ -259,7 +260,7 @@ public class LoginActivity extends Activity {
 							now.toString(),
 							available,
 							"No",
-							LoginJson.driverId
+							LoginJson.jObject.getString("driver_id")
 						);
 					userDB.close();
 					finish();

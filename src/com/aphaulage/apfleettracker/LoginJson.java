@@ -45,7 +45,7 @@ public class LoginJson {
 		params.add(new BasicNameValuePair("key", userKey));
 		
 		JSONObject jsonObject = null;
-		JSONObject jsonDriverObject = null;
+		//JSONObject jsonDriverObject = null;
 		String jsonValue = "";
 
 		try {
@@ -53,13 +53,13 @@ public class LoginJson {
 			Log.i("jsonObject123", jsonObject.toString());
 			jsonValue = jsonObject.getString("username");
 			Log.i("jsonValue123", jsonValue);
-			List<NameValuePair> paramEmail = new ArrayList<NameValuePair>();
-			paramEmail.add(new BasicNameValuePair("email", jsonValue));
-			paramEmail.add(new BasicNameValuePair("key", "9c36c7108a73324100bc9305f581979071d45ee9"));
-			jsonDriverObject = getJsonFromUrl("http://aphaulage.co.uk/apTracker/drivers/driversByEmail.json", paramEmail);
-			Log.i("jsonDriverObject",jsonDriverObject.toString());
-			driverId = jsonDriverObject.getString("email");
-			Log.i("driverId",driverId);
+			//List<NameValuePair> paramEmail = new ArrayList<NameValuePair>();
+			//paramEmail.add(new BasicNameValuePair("email", jsonValue));
+			//paramEmail.add(new BasicNameValuePair("key", "9c36c7108a73324100bc9305f581979071d45ee9"));
+			//jsonDriverObject = getJsonFromUrl("http://aphaulage.co.uk/apTracker/drivers/driversByEmail.json", paramEmail);
+			//Log.i("jsonDriverObject",jsonDriverObject.toString());
+			//driverId = jsonDriverObject.getString("email");
+			//Log.i("driverId",driverId);
 		}
 		catch (Exception e){
 			e.printStackTrace();

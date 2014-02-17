@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+          android:id="@+id/collection_details_map"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          class="com.google.android.gms.maps.SupportMapFragment"
+          xmlns:map="http://schemas.android.com/apk/res-auto"
+          map:cameraTargetLat="54.098060"
+          map:cameraTargetLng="-3.189343"/> -->
+          
+          <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:map="http://schemas.android.com/apk/res-auto"
+  android:name="com.google.android.gms.maps.MapFragment"
+  android:id="@+id/collection_details_map"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  map:cameraTargetLat="54.098060"
+  map:cameraTargetLng="-2.029343"
+  map:cameraZoom="6"
+  map:mapType="normal"
+  map:uiCompass="false"
+  map:uiZoomGestures="true"/>

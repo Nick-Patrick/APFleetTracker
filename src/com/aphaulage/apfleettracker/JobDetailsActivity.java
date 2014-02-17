@@ -2,6 +2,7 @@ package com.aphaulage.apfleettracker;
 
 import java.util.Locale;
 
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -17,14 +18,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 public class JobDetailsActivity extends FragmentActivity {
 
-	public String job_id;
+	public static String job_id;
 	public String vehicle_id;
-	public String dropoff_id;
-	public String collection_id;
+	public static String dropoff_id;
+	public static String collection_id;
 	public String packages_count;
 	
 	JobsDBAdapter jobsDB;
@@ -32,6 +34,7 @@ public class JobDetailsActivity extends FragmentActivity {
 	VehiclesDBAdapter vehiclesDB;
 	JobPackagesDBAdapter jobPackagesDB;
 	PackagesDBAdapter packagesDB;
+	DBAdapter dbAdapter;
 	
 	Cursor jobsCursor;
 	Cursor collectionsCursor;
@@ -70,7 +73,8 @@ public class JobDetailsActivity extends FragmentActivity {
 		// Set up the ViewPager with the sections adapter.
 		mViewPager = (ViewPager) findViewById(R.id.pager);
 		mViewPager.setAdapter(mSectionsPagerAdapter);
-		
+		dbAdapter = new DBAdapter(getApplicationContext());
+
 
 
 	}
@@ -78,7 +82,7 @@ public class JobDetailsActivity extends FragmentActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.job_details, menu);
+		getMenuInflater().inflate(R.menu.start_day, menu);
 		return true;
 	}
 
@@ -94,8 +98,24 @@ public class JobDetailsActivity extends FragmentActivity {
 			// http://developer.android.com/design/patterns/navigation.html#up-vs-back
 			//
 			NavUtils.navigateUpFromSameTask(this);
-			return true;
+			break;
+			
+		case R.id.menu_sign_out:
+				try {
+				dbAdapter.clearAllTables();
+			}
+			catch (Exception e){
+				e.printStackTrace();
+			}
+			finish();
+			Intent intent = new Intent(this.getApplicationContext(), LoginActivity.class);
+			startActivity(intent);
+			break;
+		
+		default:
+			break;
 		}
+		
 		return super.onOptionsItemSelected(item);
 	}
 
@@ -281,6 +301,20 @@ public class JobDetailsActivity extends FragmentActivity {
 			jobDueDateTextView.setText(jobDueDate);
 			jobAdditionalDetailsTextView.setText(jobAdditionalDetails);
 			
+			Button jobMapButton = (Button)jobView.findViewById(R.id.job_details_view_map);
+			jobMapButton.setOnClickListener(new Button.OnClickListener(){
+
+				@Override
+				public void onClick(View v) {
+					Intent i = new Intent(v.getContext(), JobDetailsMapActivity.class);
+					i.putExtra("job_id", job_id);
+					i.putExtra("dropoff_id", dropoff_id);
+					i.putExtra("collection_id", collection_id);
+					startActivity(i);		
+				}
+				
+			});
+			
 			return jobView;
 		}
 	}
@@ -346,6 +380,8 @@ public class JobDetailsActivity extends FragmentActivity {
 			collectionCountyTextView.setText(collectionCounty);
 			collectionPostcodeTextView.setText(collectionPostcode);
 			collectionTelephoneTextView.setText(collectionTelephone);
+			
+
 			
 			return collectionView;
 		}

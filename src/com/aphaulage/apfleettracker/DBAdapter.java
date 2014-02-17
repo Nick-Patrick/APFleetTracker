@@ -1,5 +1,7 @@
 package com.aphaulage.apfleettracker;
 
+import java.io.File;
+
 import android.content.Context;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -54,7 +56,9 @@ public class DBAdapter {
 			+ LocationsDBAdapter.LOCATION_OPENING_TIMES_ID + " TEXT,"
 			+ LocationsDBAdapter.TELEPHONE + " TEXT,"
 			+ LocationsDBAdapter.CREATED + " TEXT,"
-			+ LocationsDBAdapter.MODIFIED + " TEXT"
+			+ LocationsDBAdapter.MODIFIED + " TEXT,"
+			+ LocationsDBAdapter.LONGITUDE + " TEXT,"
+			+ LocationsDBAdapter.LATITUDE + " TEXT"
 			+ ");"
 		;
 	
@@ -131,6 +135,16 @@ public class DBAdapter {
 	public DBAdapter open() throws SQLException {
 		this.db = this.DBHelper.getWritableDatabase();
 		return this;
+	}
+	
+	public void clearAllTables(){
+		SQLiteDatabase db = this.DBHelper.getWritableDatabase();
+		db.delete("users", null, null);
+		db.delete("jobs", null, null);
+		db.delete("locations", null, null);
+		db.delete("vehicles", null, null);
+		db.delete("packages", null, null);
+		db.delete("job_packages", null, null);
 	}
 	
 	//Close database

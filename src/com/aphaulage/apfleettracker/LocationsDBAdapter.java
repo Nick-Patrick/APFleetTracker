@@ -21,6 +21,8 @@ public class LocationsDBAdapter {
 	public static final String TELEPHONE = "telephone";
 	public static final String CREATED = "created";
 	public static final String MODIFIED = "modified";
+	public static final String LONGITUDE = "longitude";
+	public static final String LATITUDE = "latitude";
 	
 	private static final String DATABASE_TABLE = "locations";
 	
@@ -63,7 +65,7 @@ public class LocationsDBAdapter {
 	}
 	
 	//Create a new user. Return rowId if create successful. Otherwise return -1.
-	public long createLocation(String id, String name, String address1, String address2, String address3, String town, String county, String postcode, String location_opening_times_id, String telephone, String created, String modified){
+	public long createLocation(String id, String name, String address1, String address2, String address3, String town, String county, String postcode, String location_opening_times_id, String telephone, String created, String modified, String longitude, String latitude){
 		ContentValues initialValues = new ContentValues();
 		initialValues.put(ID, id);
 		initialValues.put(NAME, name);
@@ -77,6 +79,8 @@ public class LocationsDBAdapter {
 		initialValues.put(TELEPHONE, telephone);
 		initialValues.put(CREATED, created);
 		initialValues.put(MODIFIED, modified);
+		initialValues.put(LONGITUDE, longitude);
+		initialValues.put(LATITUDE, latitude);
 		
 		Cursor mCursor = this.mDb.rawQuery("SELECT * FROM Locations WHERE id= '" + id + "'", null);
 		if(mCursor.moveToFirst()){
@@ -98,7 +102,7 @@ public class LocationsDBAdapter {
 	
 	//Return cursor of all users
 	public Cursor getAllLocations(){
-		return this.mDb.query(DATABASE_TABLE, new String[] {ID, NAME, ADDRESS1, ADDRESS2, ADDRESS3, TOWN, COUNTY, POSTCODE, LOCATION_OPENING_TIMES_ID, TELEPHONE, CREATED, MODIFIED},
+		return this.mDb.query(DATABASE_TABLE, new String[] {ID, NAME, ADDRESS1, ADDRESS2, ADDRESS3, TOWN, COUNTY, POSTCODE, LOCATION_OPENING_TIMES_ID, TELEPHONE, CREATED, MODIFIED, LONGITUDE, LATITUDE},
 				null,null,null,null,null);
 	}
 	
@@ -116,7 +120,7 @@ public class LocationsDBAdapter {
 	}
 	
 	//Update user record.
-	public boolean updateLocation(String id, String name, String address1, String address2, String address3, String town, String county, String postcode, String location_opening_times_id, String telephone, String created, String modified){
+	public boolean updateLocation(String id, String name, String address1, String address2, String address3, String town, String county, String postcode, String location_opening_times_id, String telephone, String created, String modified, String longitude, String latitude){
 		ContentValues args = new ContentValues();
 		args.put(NAME, name);
 		args.put(ADDRESS1, address1);
@@ -129,6 +133,8 @@ public class LocationsDBAdapter {
 		args.put(TELEPHONE, telephone);
 		args.put(CREATED, created);
 		args.put(MODIFIED, modified);
+		args.put(LONGITUDE, longitude);
+		args.put(LATITUDE, latitude);
 		
 		return this.mDb.update(DATABASE_TABLE, args, ID + "=" + id, null) > 0;
 	}

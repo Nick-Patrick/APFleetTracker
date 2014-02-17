@@ -11,4 +11,5 @@
     <string name="pending_jobs_assigned_by_label">ASSIGNED BY</string>
     <string name="pending_jobs_assigned_at_label">ASSIGNED</string>
     <string name="pending_jobs_button_accept_job">START JOB</string>
+    <string name="pending_jobs_button_more_details">MORE DETAILS</string>
 </resources>
