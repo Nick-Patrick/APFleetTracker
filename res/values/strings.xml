@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">APFleetTracker</string>
+    <string name="app_name">Fleet Tracker</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_splash">SplashActivity</string>
@@ -17,5 +17,9 @@
     <string name="title_section2">Section 2</string>
     <string name="title_section3">Section 3</string>
     <string name="title_activity_collection_details_map">Collection Map</string>
+    <string name="title_activity_active_job">ActiveJobActivity</string>
+    <string name="title_activity_active_job_map">ActiveJobMapActivity</string>
+    <string name="title_activity_active_job_details">ActiveJobDetailsActivity</string>
+    <string name="title_activity_init_data">InitDataActivity</string>
 
 </resources>

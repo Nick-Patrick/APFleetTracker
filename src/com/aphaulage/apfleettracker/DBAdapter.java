@@ -1,7 +1,5 @@
 package com.aphaulage.apfleettracker;
 
-import java.io.File;
-
 import android.content.Context;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -40,7 +38,8 @@ public class DBAdapter {
 			+ JobsDBAdapter.DUE_DATE + " TEXT,"
 			+ JobsDBAdapter.VEHICLE_ID + " TEXT,"
 			+ JobsDBAdapter.SYNCED + " TEXT,"
-			+ JobsDBAdapter.CREATED_BY + " TEXT"
+			+ JobsDBAdapter.CREATED_BY + " TEXT,"
+			+ JobsDBAdapter.STARTED_AT + " TEXT"
 			+ ");"
 		;
 
@@ -95,6 +94,16 @@ public class DBAdapter {
 			+ JobPackagesDBAdapter.SYNCED + " TEXT"
 			+ ");"
 		;
+	
+	private static final String CREATE_TABLE_DRIVER_LOCATIONS = 
+			"create table driver_locations (_id integer primary key autoincrement,"
+			+ DriverLocationsDBAdapter.DRIVER_ID + " TEXT,"
+			+ DriverLocationsDBAdapter.DATE_TIME_STAMP + " TEXT,"
+			+ DriverLocationsDBAdapter.LATITUDE + " TEXT,"
+			+ DriverLocationsDBAdapter.LONGITUDE + " TEXT,"
+			+ DriverLocationsDBAdapter.SYNCED + " TEXT"
+			+ ");"
+		;
 
 
 	
@@ -122,6 +131,7 @@ public class DBAdapter {
 			db.execSQL(CREATE_TABLE_VEHICLES);
 			db.execSQL(CREATE_TABLE_PACKAGES);
 			db.execSQL(CREATE_TABLE_JOB_PACKAGES);
+			db.execSQL(CREATE_TABLE_DRIVER_LOCATIONS);
 		}
 		
 		@Override
@@ -145,6 +155,7 @@ public class DBAdapter {
 		db.delete("vehicles", null, null);
 		db.delete("packages", null, null);
 		db.delete("job_packages", null, null);
+		db.delete("driver_locations", null, null);
 	}
 	
 	//Close database

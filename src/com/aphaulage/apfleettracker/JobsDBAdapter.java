@@ -22,6 +22,7 @@ public class JobsDBAdapter {
 	public static final String VEHICLE_ID = "vehicle_id";
 	public static final String SYNCED = "synced";
 	public static final String CREATED_BY = "created_by";
+	public static final String STARTED_AT = "started_at";
 	
 	
 	private static final String DATABASE_TABLE = "jobs";
@@ -65,7 +66,7 @@ public class JobsDBAdapter {
 	}
 	
 	//Create a new user. Return rowId if create successful. Otherwise return -1.
-	public long createJob(String id, String name, String collection_id, String dropoff_id, String status, String completed_date, String created, String modified, String additional_details, String due_date, String vehicle_id, String created_by){
+	public long createJob(String id, String name, String collection_id, String dropoff_id, String status, String completed_date, String created, String modified, String additional_details, String due_date, String vehicle_id, String created_by, String started_at){
 		ContentValues initialValues = new ContentValues();
 		initialValues.put(ID, id);
 		initialValues.put(NAME, name);
@@ -80,6 +81,7 @@ public class JobsDBAdapter {
 		initialValues.put(VEHICLE_ID, vehicle_id);
 		initialValues.put(SYNCED, "No");
 		initialValues.put(CREATED_BY, created_by);
+		initialValues.put(STARTED_AT, started_at);
 		
 		/*Cursor mCursor = this.mDb.query(true, DATABASE_TABLE, new String[] {ID},
 				ID.toString() + "=" + id,
@@ -106,8 +108,13 @@ public class JobsDBAdapter {
 	
 	//Return cursor of all users
 	public Cursor getAllJobs(){
-		return this.mDb.query(DATABASE_TABLE, new String[] {ID, NAME, COLLECTION_ID, DROPOFF_ID, STATUS, COMPLETED_DATE, CREATED, MODIFIED, ADDITIONAL_DETAILS, DUE_DATE, VEHICLE_ID, SYNCED, CREATED_BY},
+		return this.mDb.query(DATABASE_TABLE, new String[] {ID, NAME, COLLECTION_ID, DROPOFF_ID, STATUS, COMPLETED_DATE, CREATED, MODIFIED, ADDITIONAL_DETAILS, DUE_DATE, VEHICLE_ID, SYNCED, CREATED_BY, STARTED_AT},
 				null,null,null,null,null);
+	}
+	
+	//Return cursor of all users
+	public Cursor getAllAssignedJobs(){
+		return this.mDb.rawQuery("SELECT * FROM Jobs WHERE status = 'Assigned'", null);
 	}
 	
 	//Return cursor of selected user
@@ -115,6 +122,16 @@ public class JobsDBAdapter {
 
 		Cursor mCursor = this.mDb.rawQuery("SELECT * FROM Jobs WHERE id = '" + job_id + "'", null);
 
+		if(mCursor != null){
+			mCursor.moveToFirst();
+		}
+		return mCursor;
+	}
+	
+	public Cursor getJobByParam(String whereParam, String valueParam) throws SQLException {
+		
+		Cursor mCursor = this.mDb.rawQuery("SELECT * FROM Jobs WHERE " + whereParam + " = '" + valueParam + "'" , null);
+		
 		if(mCursor != null){
 			mCursor.moveToFirst();
 		}

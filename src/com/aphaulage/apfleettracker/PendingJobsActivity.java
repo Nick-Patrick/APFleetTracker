@@ -1,6 +1,8 @@
 package com.aphaulage.apfleettracker;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -18,6 +20,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.NavUtils;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -53,8 +56,8 @@ public class PendingJobsActivity extends FragmentActivity {
 	Cursor jobPackagesCursor;
 	
 	DBAdapter dbAdapter;
-	UsersDBAdapter userDB;
-	JobsDBAdapter jobsDB;
+	static UsersDBAdapter userDB;
+	static JobsDBAdapter jobsDB;
 	LocationsDBAdapter locationsDB;
 	VehiclesDBAdapter vehiclesDB;
 	PackagesDBAdapter packagesDB;
@@ -116,6 +119,16 @@ public class PendingJobsActivity extends FragmentActivity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item){
 		switch(item.getItemId()){
+		case android.R.id.home:
+			// This ID represents the Home or Up button. In the case of this
+			// activity, the Up button is shown. Use NavUtils to allow users
+			// to navigate up one level in the application structure. For
+			// more details, see the Navigation pattern on Android Design:
+			//
+			// http://developer.android.com/design/patterns/navigation.html#up-vs-back
+			//
+			NavUtils.navigateUpFromSameTask(this);
+			break;
 		case R.id.menu_sign_out:
 				try {
 				dbAdapter.clearAllTables();
@@ -130,6 +143,10 @@ public class PendingJobsActivity extends FragmentActivity {
 		case R.id.menu_item_refresh:
 			new RefreshJobs().execute();
 			break;
+		case R.id.menu_quit:
+			finish();
+            System.exit(0);
+            break;
 		default:
 			break;
 		}
@@ -147,7 +164,7 @@ public class PendingJobsActivity extends FragmentActivity {
 			super(fm);
 			jobsDB = new JobsDBAdapter(getApplicationContext());
 			jobsDB.open();
-			jobsCursor = jobsDB.getAllJobs();
+			jobsCursor = jobsDB.getAllAssignedJobs();
 			locationsDB = new LocationsDBAdapter(getApplicationContext());
 			vehiclesDB = new VehiclesDBAdapter(getApplicationContext());
 			packagesDB = new PackagesDBAdapter(getApplicationContext());
@@ -195,6 +212,7 @@ public class PendingJobsActivity extends FragmentActivity {
 			
 			args.putString(DummySectionFragment.JOB_ID, jobsCursor.getString(0));
 			args.putString(DummySectionFragment.VEHICLE_ID, vehiclesCursor.getString(0));
+			args.putString(DummySectionFragment.DRIVER_ID, mDriverId);
 			
 			vehiclesDB.close();
 			locationsDB.close();
@@ -246,6 +264,7 @@ public class PendingJobsActivity extends FragmentActivity {
 		
 		public static final String JOB_ID = "job_id";
 		public static final String VEHICLE_ID = "vehicle_id";
+		public static final String DRIVER_ID = "driver_id";
 
 		public DummySectionFragment() {
 		}
@@ -266,6 +285,7 @@ public class PendingJobsActivity extends FragmentActivity {
 			String assignedAt = args.getString(ASSIGNED_AT);
 			final String jobId = args.getString(JOB_ID);
 			final String vehicleId = args.getString(VEHICLE_ID);
+			final String driverId = args.getString(DRIVER_ID);
 			
 			
 			View rootView = inflater.inflate(R.layout.fragment_pending_jobs_dummy, container, false);
@@ -285,7 +305,12 @@ public class PendingJobsActivity extends FragmentActivity {
 			
 				jobNameTextView.setText(jobName);
 				collectionNameTextView.setText(collectionName);
-				dueByTextView.setText("Due by: " + dueBy);
+				if(dueBy.length()<6){
+					dueByTextView.setVisibility(View.GONE);
+				}
+				else {
+					dueByTextView.setText("Due by: " + dueBy);
+				}
 				dropoffNameTextView.setText(dropoffName);
 				vehicleNameTextView.setText(vehicleName);
 				packagesCountTextView.setText(packagesCount);
@@ -317,6 +342,38 @@ public class PendingJobsActivity extends FragmentActivity {
 			
 			Button startJobButton = (Button)rootView.findViewById(R.id.start_job_button);
 			
+			jobsDB.open();
+			Cursor activeJobsCursor;
+			activeJobsCursor = jobsDB.getJobByParam("STATUS", "Active");
+			jobsDB.close();
+
+			if(activeJobsCursor.getCount() > 0){
+				startJobButton.setEnabled(false);
+				startJobButton.append(" (Already a job active)");
+			}
+			
+			startJobButton.setOnClickListener(new View.OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					String now = new SimpleDateFormat("HH:mm:ss").format(new Date());
+
+					// TODO Auto-generated method stub
+					userDB.open();
+					userDB.updateUserRecord("AVAILABLE", "Active", driverId);
+					userDB.updateUserRecord("SYNCED", "No", driverId);
+					userDB.close();
+					jobsDB.open();
+					jobsDB.updateJobRecord("STATUS", "Active", jobId);
+					jobsDB.updateJobRecord("STARTED_AT", now, jobId);
+					jobsDB.updateJobRecord("SYNCED", "No", jobId);
+					Intent startJobIntent = new Intent(v.getContext(), ActiveJobActivity.class);
+					startJobIntent.putExtra("job_id", jobId);
+					startJobIntent.putExtra("driver_id", driverId);
+					jobsDB.close();
+					startActivity(startJobIntent);
+				}
+			});
 		
 			return rootView;
 		}
@@ -325,13 +382,13 @@ public class PendingJobsActivity extends FragmentActivity {
 	class RefreshJobs extends AsyncTask<String, String, String>{
 
 	
-		
+		ProgressDialog pDialog;
 		// private static final ProgressDialog progDailog = null;
 
 		@Override
 	        protected void onPreExecute() {
 	            super.onPreExecute();
-	            ProgressDialog pDialog = ProgressDialog.show(PendingJobsActivity.this, "Finding Jobs", "Searching..");
+	            pDialog = ProgressDialog.show(PendingJobsActivity.this, "Finding Jobs", "Searching..");
 	            pDialog.show();
 	        }
 		
@@ -357,6 +414,7 @@ public class PendingJobsActivity extends FragmentActivity {
 							for(int i=0; i<jsonJobs.getJSONArray("message").length(); i++){
 								Log.i("for", "for started");
 								Log.i("1: ", jsonJobs.getJSONArray("message").getJSONObject(i).getJSONObject("Job").toString());
+							
 								jobsDB.createJob(
 										jsonJobs.getJSONArray("message").getJSONObject(i).getJSONObject("Job").getString("id"),
 										jsonJobs.getJSONArray("message").getJSONObject(i).getJSONObject("Job").getString("name"), 
@@ -370,7 +428,8 @@ public class PendingJobsActivity extends FragmentActivity {
 										jsonJobs.getJSONArray("message").getJSONObject(i).getJSONObject("Job").getString("due_date"), 
 										jsonJobs.getJSONArray("message").getJSONObject(i).getJSONArray("DriverVehicleJob").getJSONObject(0).getString("vehicle_id"),
 										//jsonJobs.getJSONArray("message").getJSONObject(i).getJSONObject("DriverVehicleJob").getString("vehicle_id"),
-										jsonJobs.getJSONArray("message").getJSONObject(i).getJSONObject("Job").getString("created_by")
+										jsonJobs.getJSONArray("message").getJSONObject(i).getJSONObject("Job").getString("created_by"),
+										""										
 										);
 								
 								for(int p=0;p<jsonJobs.getJSONArray("message").getJSONObject(i).getJSONArray("JobPackage").length();p++){
@@ -483,9 +542,9 @@ public class PendingJobsActivity extends FragmentActivity {
 		protected void onPostExecute(String unused){
 			super.onPostExecute(unused);
 			finish();
+			pDialog.dismiss();
 			startActivity(getIntent());
 		}
 		
 	}
 }
-

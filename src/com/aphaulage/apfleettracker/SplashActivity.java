@@ -56,7 +56,7 @@ public class SplashActivity extends Activity {
 				}
 				//Skip login activity if user HAS logged in before.
 				else {
-					Intent intent = new Intent(SplashActivity.this, StartDayActivity.class);
+					Intent intent = new Intent(SplashActivity.this, InitDataActivity.class);
 					startActivity(intent);
 				}
 				finish();
