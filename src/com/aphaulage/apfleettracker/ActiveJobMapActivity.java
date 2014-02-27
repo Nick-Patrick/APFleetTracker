@@ -115,6 +115,7 @@ public class ActiveJobMapActivity extends Activity  {
 	        mMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.collection_details_map)).getMap();
 	        // Check if we were successful in obtaining the map.
 	        if (mMap != null) {
+	        	try{
 	        	Log.i("lat", "lat: " + dropoffLat);
 	        	Log.i("lng", "lng: " + dropoffLng);
 	        	mMap.addMarker(new MarkerOptions()
@@ -128,6 +129,10 @@ public class ActiveJobMapActivity extends Activity  {
 	            .title("Collection: " + collectionCursor.getString(1))
 	            .snippet(collectionCursor.getString(5) + ", " + collectionCursor.getString(7))
 	        	);
+	        	}
+	        	catch (Exception e){
+	        		e.printStackTrace();
+	        	}
 	            
 	        }
 	    }
@@ -140,22 +145,28 @@ public class ActiveJobMapActivity extends Activity  {
 	        runOnUiThread(new Runnable() {
 	            @Override
 	            public void run() {
-	            	Log.i("Timer", "timer running");
-	            	driverLocationsDB.open();
-	            	Cursor driverLocation = driverLocationsDB.getAllDriverLocations();
-	            	driverLocation.moveToLast();
-	            	driverLocationsDB.close();
-	            	float driverLat = Float.parseFloat(driverLocation.getString(2));
-	            	float driverLng = Float.parseFloat(driverLocation.getString(3));
-	            	Log.i("running", "lat: " + driverLat);
-	            	Log.i("running", "lng: " + driverLng);
-	            	mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(driverLat, driverLng), 9));
-
-	            	mMap.addMarker(new MarkerOptions()
-		            .position(new LatLng(driverLat,driverLng))
-		            .title("You are here!")
-		        	);
-		            
+	            	try{
+		            	Log.i("Timer", "timer running");
+		            	driverLocationsDB.open();
+		            	Cursor driverLocation = driverLocationsDB.getAllDriverLocations();
+		            	if(driverLocation.getCount() > 0){
+			            	driverLocation.moveToLast();
+			            	driverLocationsDB.close();
+			            	float driverLat = Float.parseFloat(driverLocation.getString(2));
+			            	float driverLng = Float.parseFloat(driverLocation.getString(3));
+			            	Log.i("running", "lat: " + driverLat);
+			            	Log.i("running", "lng: " + driverLng);
+			            	mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(driverLat, driverLng), 9));
+		
+			            	mMap.addMarker(new MarkerOptions()
+				            .position(new LatLng(driverLat,driverLng))
+				            .title("You are here!")
+				        	);
+		            	}
+	            	}
+	            	catch(Exception e){
+	            		e.printStackTrace();
+	            	}
 	            }
 	        });
 	    }

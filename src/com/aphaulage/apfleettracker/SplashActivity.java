@@ -11,7 +11,7 @@ import android.view.WindowManager;
 public class SplashActivity extends Activity {
 
 	//Time to show splash screen
-	private static int SPASH_SCREEN_TIME = 1000;
+	private static int SPASH_SCREEN_TIME = 4000;
 	
 	private Boolean alreadyLoggedIn;
 	

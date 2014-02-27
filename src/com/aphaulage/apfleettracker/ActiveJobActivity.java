@@ -28,6 +28,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -62,17 +65,22 @@ GooglePlayServicesClient.OnConnectionFailedListener, LocationListener, com.googl
 	protected String jobStatus;
 	protected String driverId;
 	
+	protected String trackingEnabled;
+	
 	Button completedJobButton;
-	Button moreDetailsButton;
+	TextView moreDetailsTextView;
 	TextView jobNameTextView;
 	TextView jobStartedTextView;
 	TextView milesTravelledTextView;
 	TextView timeTravelledTextView;
 	
+	Switch userDrivingSwitch;
+	
 	DBAdapter dbAdapter;	
 	JobsDBAdapter jobsDB;
 	UsersDBAdapter usersDB;
 	DriverLocationsDBAdapter driverLocationsDB;
+	DriverSettingsDBAdapter driverSettingsDB;
 	
 	JsonParser jsonParser = new JsonParser();
 	private static final String updateJobUrl = "http://aphaulage.co.uk/apTracker/jobs/updateActiveJob/";
@@ -114,12 +122,14 @@ GooglePlayServicesClient.OnConnectionFailedListener, LocationListener, com.googl
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_active_job);
+		
 		// Show the Up button in the action bar.
 		setupActionBar();
 		usersDB = new UsersDBAdapter(getApplicationContext());
 		dbAdapter = new DBAdapter(getApplicationContext());
 		jobsDB = new JobsDBAdapter(getApplicationContext());
 		driverLocationsDB = new DriverLocationsDBAdapter(getApplicationContext());
+		driverSettingsDB = new DriverSettingsDBAdapter(getApplicationContext());
 		Intent intent = getIntent();
 		jobId = intent.getStringExtra("job_id");
 		driverId = intent.getStringExtra("driver_id");
@@ -154,8 +164,9 @@ GooglePlayServicesClient.OnConnectionFailedListener, LocationListener, com.googl
         */
        if(mLocationClient == null){
     	   mLocationClient = new LocationClient(this, this, this);
-    	   mUpdatesRequested = true;
+    	   mUpdatesRequested = false;
        }
+       
        completedJobButton = (Button)findViewById(R.id.active_job_complete_job_button);
        completedJobButton.setOnClickListener(new OnClickListener(){
 
@@ -177,11 +188,16 @@ GooglePlayServicesClient.OnConnectionFailedListener, LocationListener, com.googl
 			             * The current Activity is the listener, so
 			             * the argument is "this".
 			             */
-    		            mUpdatesRequested = false;
     			        mLocationClient.disconnect();	
 			        } 
+		            mUpdatesRequested = false;
 
-					String completedNow = new SimpleDateFormat("HH:mm:ss").format(new Date());
+			        
+			        driverSettingsDB.open();
+			        driverSettingsDB.updateDriverSettingRecord("TRACKING_STATUS", "No");
+			        driverSettingsDB.close();
+
+					String completedNow = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
 		            jobsDB.open();
 		            jobsDB.updateJobRecord("STATUS", "Complete", jobId);
 		            jobsDB.updateJobRecord("COMPLETED_DATE", completedNow, jobId);
@@ -209,59 +225,13 @@ GooglePlayServicesClient.OnConnectionFailedListener, LocationListener, com.googl
 
 		    AlertDialog alert = builder.create();
 		    alert.show();
-
-//	    		DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-//	    		    @Override
-//	    		    public void onClick(DialogInterface dialog, int which) {
-//	    		        switch (which){
-//	    		        case DialogInterface.BUTTON_POSITIVE:
-//	    			        // If the client is connected
-//	    			        if (mLocationClient.isConnected()) {
-//	    			            /*
-//	    			             * Remove location updates for a listener.
-//	    			             * The current Activity is the listener, so
-//	    			             * the argument is "this".
-//	    			             */
-//		    		            mUpdatesRequested = false;
-//		    					String completedNow = new SimpleDateFormat("HH:mm:ss").format(new Date());
-//		    		            jobsDB.open();
-//		    		            jobsDB.updateJobRecord("STATUS", "Complete", jobId);
-//		    		            jobsDB.updateJobRecord("COMPLETED_DATE", completedNow, jobId);
-//		    		            jobsDB.updateJobRecord("SYNCED", "No", jobId);
-//		    		            jobsDB.close();
-//		    		            usersDB.open();
-//		    		            usersDB.updateUserRecord("AVAILABLE", "Available", driverId);
-//		    		            usersDB.updateUserRecord("SYNCED", "No", driverId);
-//		    		            usersDB.close();
-//		    		    		new UpdateJobFinished().execute();
-//		    		    		
-//		    		    		/*
-//		    			         * After disconnect() is called, the client is
-//		    			         * considered "dead".
-//		    			         */
-//		    			        mLocationClient.disconnect();			
-//	    			        }
-//	    		    		break;
-//
-//	    		        case DialogInterface.BUTTON_NEGATIVE:
-//	    		        	dialog.dismiss();
-//	    		        	break;
-//	    		        }
-//	    		    }
-//	    		};
-//	    		
-//	    		AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext());
-//		        builder.setMessage("Are you sure?").setPositiveButton("Yes", dialogClickListener).setNegativeButton("No", dialogClickListener).show();
-//		        
 			}
     	   
        });
-       if(!mLocationClient.isConnected()){
-    	   mLocationClient.connect();
-       }
+     
        
-       moreDetailsButton = (Button)findViewById(R.id.active_job_more_details);
-       moreDetailsButton.setOnClickListener(new OnClickListener(){
+       moreDetailsTextView = (TextView)findViewById(R.id.active_job_job_name);
+       moreDetailsTextView.setOnClickListener(new OnClickListener(){
 
 		@Override
 		public void onClick(View v) {
@@ -284,6 +254,50 @@ GooglePlayServicesClient.OnConnectionFailedListener, LocationListener, com.googl
        milesTravelledTextView = (TextView)findViewById(R.id.active_job_job_miles);
        milesTravelledTextView.setText("102*");
        
+
+       userDrivingSwitch = (Switch)findViewById(R.id.driving_switch);
+       userDrivingSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener(){
+
+		@Override
+		public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
+			driverSettingsDB.open();
+			if (mUpdatesRequested == false){
+				userDrivingSwitch.setText("Currently Driving");
+				  if(!mLocationClient.isConnected()){
+			    	   mLocationClient.connect();
+			       }
+					mUpdatesRequested = true;
+				  Toast.makeText(getApplicationContext(), "Tracking Enabled", Toast.LENGTH_SHORT).show();
+				  
+				  driverSettingsDB.updateDriverSettingRecord("TRACKING_STATUS", "Yes");
+			}
+			else {
+				userDrivingSwitch.setText("Not Driving");
+				 if(mLocationClient.isConnected()){
+			    	   mLocationClient.disconnect();
+			       }
+				Toast.makeText(getApplicationContext(), "Tracking Disabled", Toast.LENGTH_SHORT).show();
+				mUpdatesRequested = false;
+				  driverSettingsDB.updateDriverSettingRecord("TRACKING_STATUS", "No");
+
+			}
+		}
+
+
+       });
+       driverSettingsDB.open();
+
+       Cursor driverSettingsCursor = driverSettingsDB.getAllDriverSettings();
+       driverSettingsCursor.moveToFirst();
+       trackingEnabled = driverSettingsCursor.getString(0);
+       Log.i("tracking", trackingEnabled);
+       if(trackingEnabled.equals("Yes")){
+    	   userDrivingSwitch.setChecked(true);
+       }
+       else {
+    	   userDrivingSwitch.setChecked(false);
+       }
+       driverSettingsDB.close();
 	}
 	
 	   /*
@@ -494,11 +508,13 @@ GooglePlayServicesClient.OnConnectionFailedListener, LocationListener, com.googl
 		protected String doInBackground(String... arg0) {
 			Log.i("UpdateJobFinished", "Starting Background");
 			try{
-				String now = new SimpleDateFormat("HH:mm:ss").format(new Date());
+				//String now = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date());
+				String now = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
 				List<NameValuePair> jobParams = new ArrayList<NameValuePair>();
 				jobParams.add(new BasicNameValuePair("job_id", jobId));
 				jobParams.add(new BasicNameValuePair("key", "9c36c7108a73324100bc9305f581979071d45ee9"));
 				jobParams.add(new BasicNameValuePair("status", "Complete"));
+				jobParams.add(new BasicNameValuePair("completed_date", now));
 				Log.i("FinishedJob - Params", jobParams.toString());
 				JSONObject jsonJobsResult = jsonParser.makeHttpRequest(updateJobUrl + jobId + ".json", "POST", jobParams);
 				Log.i("UpdateJobFinished - JsonJobsResult", jsonJobsResult.toString());
@@ -585,16 +601,19 @@ Log.i("error", "236");
 
 	@Override
 	public void onLocationChanged(Location location) {
-
-		driverLocationsDB.open();
-		driverLocationsDB.createDriverLocation(driverId, location.getLatitude(), location.getLongitude(), "No");
-		//Log.i("ActiveJobActivity", driverId);
 		Log.i("ActiveJobActivity", "Lat: " + location.getLatitude());
 		Log.i("ActiveJobActivity", "Lng: " + location.getLongitude());
 		Log.i("ActiveJobActivity", "Speed: " + location.getSpeed());
 		Log.i("ActiveJobActivity", "Accuracy: " + location.getAccuracy());
-		driverLocationsDB.close();
-		new AddDriverLocation().execute();
+		Toast.makeText(getApplicationContext(), String.valueOf(location.getSpeed()), Toast.LENGTH_SHORT).show();
+		if(location.getSpeed() > 3) { //check if speed is moving.
+			driverLocationsDB.open();
+			driverLocationsDB.createDriverLocation(driverId, location.getLatitude(), location.getLongitude(), "No");
+			//Log.i("ActiveJobActivity", driverId);
+
+			driverLocationsDB.close();
+			new AddDriverLocation().execute();
+		}
 	}
 
 	@Override
@@ -614,6 +633,7 @@ Log.i("error", "236");
 		// TODO Auto-generated method stub
 		
 	}
+
 }
 
 

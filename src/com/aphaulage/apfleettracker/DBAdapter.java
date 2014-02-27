@@ -105,6 +105,11 @@ public class DBAdapter {
 			+ ");"
 		;
 
+	private static final String CREATE_TABLE_DRIVER_SETTINGS = 
+			"create table driver_settings (_id integer primary key autoincrement,"
+			+ DriverSettingsDBAdapter.TRACKING_STATUS + " TEXT"
+			+ ");"
+		;
 
 	
 	private final Context context;
@@ -132,6 +137,7 @@ public class DBAdapter {
 			db.execSQL(CREATE_TABLE_PACKAGES);
 			db.execSQL(CREATE_TABLE_JOB_PACKAGES);
 			db.execSQL(CREATE_TABLE_DRIVER_LOCATIONS);
+			db.execSQL(CREATE_TABLE_DRIVER_SETTINGS);
 		}
 		
 		@Override
@@ -156,6 +162,7 @@ public class DBAdapter {
 		db.delete("packages", null, null);
 		db.delete("job_packages", null, null);
 		db.delete("driver_locations", null, null);
+		db.delete("driver_settings", null, null);
 	}
 	
 	//Close database

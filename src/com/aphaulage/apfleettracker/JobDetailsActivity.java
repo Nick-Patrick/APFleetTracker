@@ -82,7 +82,7 @@ public class JobDetailsActivity extends FragmentActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.start_day, menu);
+		getMenuInflater().inflate(R.menu.active_job, menu);
 		return true;
 	}
 
@@ -98,10 +98,17 @@ public class JobDetailsActivity extends FragmentActivity {
 			// http://developer.android.com/design/patterns/navigation.html#up-vs-back
 			//
 			NavUtils.navigateUpFromSameTask(this);
+			return true;
+		
+		case R.id.menu_item_map:
+			Intent i = new Intent(this.getApplicationContext(), JobDetailsMapActivity.class);
+			i.putExtra("job_id", job_id);
+			i.putExtra("dropoff_id", dropoff_id);
+			i.putExtra("collection_id", collection_id);
+			startActivity(i);
 			break;
-			
 		case R.id.menu_sign_out:
-				try {
+			try {
 				dbAdapter.clearAllTables();
 			}
 			catch (Exception e){
@@ -111,7 +118,10 @@ public class JobDetailsActivity extends FragmentActivity {
 			Intent intent = new Intent(this.getApplicationContext(), LoginActivity.class);
 			startActivity(intent);
 			break;
-		
+		case R.id.menu_quit:
+			finish();
+            System.exit(0);
+            break;
 		default:
 			break;
 		}
@@ -301,19 +311,7 @@ public class JobDetailsActivity extends FragmentActivity {
 			jobDueDateTextView.setText(jobDueDate);
 			jobAdditionalDetailsTextView.setText(jobAdditionalDetails);
 			
-			Button jobMapButton = (Button)jobView.findViewById(R.id.job_details_view_map);
-			jobMapButton.setOnClickListener(new Button.OnClickListener(){
 
-				@Override
-				public void onClick(View v) {
-					Intent i = new Intent(v.getContext(), JobDetailsMapActivity.class);
-					i.putExtra("job_id", job_id);
-					i.putExtra("dropoff_id", dropoff_id);
-					i.putExtra("collection_id", collection_id);
-					startActivity(i);		
-				}
-				
-			});
 			
 			return jobView;
 		}

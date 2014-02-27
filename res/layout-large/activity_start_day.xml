@@ -1,0 +1,274 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_centerHorizontal="true"
+    android:layout_centerVertical="true"
+    android:background="@color/GhostWhite"
+    android:orientation="vertical"
+    android:padding="12dp" >
+         
+     <LinearLayout
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:gravity="center">
+		
+		<TextView
+             android:id="@+id/user_name"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_marginTop="32dp"
+             android:layout_marginBottom="30dp"
+             android:textSize="@dimen/text_medium" />
+		
+		
+		
+	</LinearLayout>
+	
+     	<View
+	        android:layout_width="match_parent"
+	        android:layout_height="0.2dp"
+	        android:id="@+id/separator"
+	        android:visibility="visible"
+	        android:background="@android:color/darker_gray"/>
+
+     	<LinearLayout
+     	    android:id="@+id/user_active_job_area"
+     	    android:layout_width="match_parent"
+     	    android:layout_height="wrap_content"
+     	    android:paddingTop="12dp"
+     	    android:orientation="vertical"
+     	    android:background="@drawable/text_view_selector"
+     	    android:gravity="center"
+     	    android:focusable="true"
+            android:clickable="true">
+           
+
+     	    
+           <LinearLayout
+               android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:gravity="center">
+
+              
+
+               <ImageView
+                   android:id="@+id/imageView1"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:layout_centerHorizontal="true"
+                   android:layout_centerVertical="true"
+                   android:src="@drawable/ic_action_wheel" />
+               
+                <TextView
+                   android:id="@+id/user_active_job_label"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:text="Current Job"
+                   android:textSize="@dimen/text_medium_small" />
+      
+      		</LinearLayout>
+
+         <TextView
+             android:id="@+id/user_active_job"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_gravity="center"
+             android:layout_marginBottom="12dp"
+             android:text="None"
+             android:textSize="@dimen/text_large" />
+
+  		</LinearLayout>
+  		
+     	
+        <View
+        android:layout_width="match_parent"
+        android:layout_height="0.2dp"
+        android:id="@+id/separator"
+        android:visibility="visible"
+        android:background="@android:color/darker_gray"/>
+
+        
+      	<LinearLayout
+  	    android:id="@+id/user_pending_jobs_area"
+  	    android:layout_width="match_parent"
+  	    android:layout_height="wrap_content"
+  	    android:paddingTop="12dp"
+  	    android:orientation="vertical"
+  	    android:background="@drawable/text_view_selector"
+  	    android:gravity="center">
+         
+         <LinearLayout
+		     android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:gravity="center">
+
+		     <ImageView
+		         android:id="@+id/imageView1"
+		         android:layout_width="wrap_content"
+		         android:layout_height="wrap_content"
+		         android:layout_centerHorizontal="true"
+		         android:layout_centerVertical="true"
+		         android:src="@drawable/ic_action_list" />
+	     
+	         <TextView 
+			        android:id="@+id/user_pending_jobs_label"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content" 
+			        android:text="Pending Jobs"
+			        android:textSize="@dimen/text_medium_small" />
+	     
+    	 </LinearLayout>
+	     
+    <TextView
+        android:id="@+id/user_pending_jobs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_marginBottom="12dp"
+        android:text="0"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textSize="@dimen/text_very_large" />
+    
+    	 </LinearLayout>
+    
+    
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.2dp"
+        android:id="@+id/separator"
+        android:visibility="visible"
+        android:background="@android:color/darker_gray"/>
+    
+    
+   	<LinearLayout
+    android:id="@+id/user_completed_jobs_area"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="12dp"
+    android:orientation="vertical"
+    android:background="@drawable/text_view_selector"
+    android:gravity="center">
+
+    <LinearLayout
+     android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:gravity="center">
+
+    
+
+	     <ImageView
+	         android:id="@+id/imageView1"
+	         android:layout_width="wrap_content"
+	         android:layout_height="wrap_content"
+	         android:src="@drawable/ic_action_tick" />
+	     
+          <TextView
+	         android:id="@+id/user_completed_jobs_label"
+	         android:layout_width="wrap_content"
+	         android:layout_height="wrap_content"
+	         android:text="Completed Jobs"
+	         android:textAppearance="?android:attr/textAppearanceSmall"
+	         android:textSize="@dimen/text_medium_small" />
+     
+     </LinearLayout>
+     
+    
+    <TextView
+        android:id="@+id/user_completed_jobs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_marginBottom="12dp"
+        android:text="0"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textSize="@dimen/text_very_large" />
+    
+    	 </LinearLayout>
+    
+    
+     <View
+        android:layout_width="match_parent"
+        android:layout_height="0.2dp"
+        android:id="@+id/separator"
+        android:visibility="visible"
+        android:layout_marginBottom="12dp"
+        android:background="@android:color/darker_gray"/>
+     
+     <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Today's Stats"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="8dp"
+        android:textSize="@dimen/text_medium" />
+     
+     <TextView
+        android:id="@+id/start_day_current_date_time"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="@dimen/text_medium_small" />
+
+     <LinearLayout
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content" >
+
+         <TextView
+             android:id="@+id/textView4"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_gravity="left"
+             android:text="Miles:"
+             android:textAppearance="?android:attr/textAppearanceSmall" />
+
+         <TextView
+             android:id="@+id/textView3"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_gravity="right"
+             android:text="Time Driving:"
+             android:textAppearance="?android:attr/textAppearanceSmall" />
+
+     </LinearLayout>
+
+     <LinearLayout
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content" >
+
+         <TextView
+             android:id="@+id/textView1"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_gravity="left"
+             android:text="MPH:"
+             android:textAppearance="?android:attr/textAppearanceSmall" />
+
+         <TextView
+             android:id="@+id/textView2"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:layout_gravity="right"
+             android:text="Break Taken:"
+             android:textAppearance="?android:attr/textAppearanceSmall" />
+
+     </LinearLayout>
+     
+       <View
+        android:layout_width="match_parent"
+        android:layout_height="0.2dp"
+        android:id="@+id/separator"
+        android:visibility="visible"
+        android:layout_marginBottom="20dp"
+        android:layout_marginTop="20dp"
+        android:background="@android:color/darker_gray"/>
+     
+ 
+    
+   
+        
+
+    
+
+
+</LinearLayout>

@@ -78,8 +78,13 @@
 
         <activity
             android:name="com.aphaulage.apfleettracker.JobDetailsMapActivity"
-            android:label="@string/title_activity_collection_details_map" >
+            android:label="@string/title_activity_collection_details_map" 
+            android:parentActivityName="com.aphaulage.apfleettracker.JobDetailsActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.aphaulage.apfleettracker.JobDetailsActivity" />
         </activity>
+        
         <activity
             android:name="com.aphaulage.apfleettracker.ActiveJobActivity"
             android:label="@string/title_activity_active_job"

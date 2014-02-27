@@ -12,20 +12,22 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnTouchListener;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class StartDayActivity extends Activity {
 	DBAdapter dbAdapter;
@@ -35,6 +37,7 @@ public class StartDayActivity extends Activity {
 	VehiclesDBAdapter vehiclesDB;
 	PackagesDBAdapter packagesDB;
 	JobPackagesDBAdapter jobPackagesDB;
+	DriverLocationsDBAdapter driverLocationsDB;
 	
 	Cursor usersCursor;
 	Cursor jobsCursor;
@@ -44,7 +47,9 @@ public class StartDayActivity extends Activity {
 	private static final String getLocationsUrl = "http://aphaulage.co.uk/apTracker/locations/getAllLocations.json";
 	private static final String getVehiclesUrl = "http://aphaulage.co.uk/apTracker/vehicles/getAllVehicles.json";
 	private static final String getPackagesUrl = "http://aphaulage.co.uk/apTracker/packages/getAllPackages.json";
-
+	private static final String updateJobUrl = "http://aphaulage.co.uk/apTracker/jobs/updateActiveJob/";
+	private static final String updateDriverUrl = "http://aphaulage.co.uk/apTracker/drivers/update/";
+	private static final String addDriverLocationUrl = "http://aphaulage.co.uk/apTracker/driverLocations/addDriverLocation.json";
 	
 	TextView currentDateTimeTextView;
 	TextView userNameTextView;
@@ -65,13 +70,14 @@ public class StartDayActivity extends Activity {
 		setContentView(R.layout.activity_start_day);
 		dbAdapter = new DBAdapter(getApplicationContext());
 
-		getActionBar().setTitle("Driver Details");
+		getActionBar().setTitle("Dashboard");
 		userDB = new UsersDBAdapter(getApplicationContext());
 		jobsDB = new JobsDBAdapter(getApplicationContext());
 		locationsDB = new LocationsDBAdapter(getApplicationContext());
 		vehiclesDB = new VehiclesDBAdapter(getApplicationContext());
 		packagesDB = new PackagesDBAdapter(getApplicationContext());
 		jobPackagesDB = new JobPackagesDBAdapter(getApplicationContext());
+		driverLocationsDB = new DriverLocationsDBAdapter(getApplicationContext());
 		
 		String now = new SimpleDateFormat("dd/MM/yyyy").format(new Date());
 		currentDateTimeTextView = (TextView)findViewById(R.id.start_day_current_date_time);
@@ -82,8 +88,8 @@ public class StartDayActivity extends Activity {
 		usersCursor.moveToNext();
 		mDriverEmail = usersCursor.getString(3);
 		mDriverId = usersCursor.getString(8);
-		userNameTextView = (TextView)findViewById(R.id.user_name);
-		userNameTextView.setText(usersCursor.getString(1) + " " + usersCursor.getString(2));
+		//userNameTextView = (TextView)findViewById(R.id.user_name);
+		//userNameTextView.setText(usersCursor.getString(1) + " " + usersCursor.getString(2));
 		
 
 		
@@ -91,13 +97,12 @@ public class StartDayActivity extends Activity {
 		
 		jobsDB.open();
 		jobsCursor = jobsDB.getJobByParam("STATUS", "Active");
+		userActiveJobTextView = (TextView)findViewById(R.id.user_active_job);
+		LinearLayout activeJobArea = (LinearLayout)findViewById(R.id.user_active_job_area);
 		if(jobsCursor.getCount() != 0){
-			userActiveJobTextView = (TextView)findViewById(R.id.user_active_job);
 			userActiveJobTextView.setText(jobsCursor.getString(1));
-			final LinearLayout activeJobArea = (LinearLayout)findViewById(R.id.user_active_job_area);
 		
 			activeJobArea.setOnClickListener(new OnClickListener(){
-
 				@Override
 				public void onClick(View v){
 					jobsDB.open();
@@ -109,34 +114,45 @@ public class StartDayActivity extends Activity {
 					startJobIntent.putExtra("driver_id", mDriverId);
 					startActivity(startJobIntent);
 				}
-				
 			});
-
-			
+		}
+		else {
+			activeJobArea.setOnClickListener(new OnClickListener(){
+				@Override
+				public void onClick(View v){
+					Toast.makeText(getApplicationContext(), "No job currently active", Toast.LENGTH_SHORT).show();
+				}
+			});
 		}
 		
 		jobsDB.open();
 		Cursor jobsAssignedCursor;
 		jobsAssignedCursor = jobsDB.getJobByParam("STATUS", "Assigned");
+		pendingJobsCountTextView = (TextView)findViewById(R.id.user_pending_jobs);
+		LinearLayout pendingJobsArea = (LinearLayout)findViewById(R.id.user_pending_jobs_area);
+
 		if(jobsAssignedCursor.getCount() != 0){
-			pendingJobsCountTextView = (TextView)findViewById(R.id.user_pending_jobs);
 			pendingJobsCountTextView.setText(Integer.toString(jobsAssignedCursor.getCount()));
-			pendingJobsCountTextView.setOnClickListener(new OnClickListener(){
+			
+			pendingJobsArea.setOnClickListener(new OnClickListener(){
 
 				@Override
 				public void onClick(View v) {
 					
-					Log.i("mDriverId", mDriverId);
-					Log.i("c availablity - ", usersCursor.getString(6).toString());
-				
-						
-					Log.i("StartDayActivity", "Pending Jobs opened.");
-					
 					intent = new Intent(StartDayActivity.this, PendingJobsActivity.class);
-					
-
 
 					new UpdateAvailability().execute();
+				}
+				
+			});
+		}
+		else {
+			pendingJobsArea.setOnClickListener(new OnClickListener(){
+
+				@Override
+				public void onClick(View v) {
+					
+					Toast.makeText(getApplicationContext(), "No Pending Jobs", Toast.LENGTH_SHORT).show();
 				}
 				
 			});
@@ -144,10 +160,28 @@ public class StartDayActivity extends Activity {
 		
 		Cursor jobsCompletedCursor;
 		jobsCompletedCursor = jobsDB.getJobByParam("STATUS", "Complete");
+		completedJobsCountTextView = (TextView)findViewById(R.id.user_completed_jobs);
+		LinearLayout completedJobsArea = (LinearLayout)findViewById(R.id.user_completed_jobs_area);
 		if(jobsCompletedCursor.getCount() != 0){
-			completedJobsCountTextView = (TextView)findViewById(R.id.user_completed_jobs);
 			completedJobsCountTextView.setText(Integer.toString(jobsCompletedCursor.getCount()));
+			completedJobsArea.setOnClickListener(new OnClickListener(){
 
+				@Override
+				public void onClick(View v) {
+					Toast.makeText(getApplicationContext(), "Completed Jobs", Toast.LENGTH_SHORT).show();
+				}
+				
+			});
+		}
+		else {
+			completedJobsArea.setOnClickListener(new OnClickListener(){
+
+				@Override
+				public void onClick(View v) {
+					Toast.makeText(getApplicationContext(), "Completed Jobs", Toast.LENGTH_SHORT).show();
+				}
+				
+			});
 		}
 		jobsDB.close();
 
@@ -158,13 +192,26 @@ public class StartDayActivity extends Activity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 	    MenuInflater inflater = getMenuInflater();
-	    inflater.inflate(R.menu.start_day, menu);
+	    inflater.inflate(R.menu.dashboard, menu);
 	    return super.onCreateOptionsMenu(menu);
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item){
 		switch(item.getItemId()){
+		case R.id.menu_item_refresh:
+			finish();
+			Intent initIntent = new Intent(this.getApplicationContext(), InitDataActivity.class);
+			startActivity(initIntent);
+			break;
+		case R.id.menu_item_sync:
+			if(isNetworkAvailable()==true){
+			new SyncData().execute();
+			}
+			else {
+				Toast.makeText(getApplicationContext(), "No internet connection available", Toast.LENGTH_LONG).show();
+			}
+			break;
 		case R.id.menu_sign_out:
 				try {
 				dbAdapter.clearAllTables();
@@ -190,7 +237,7 @@ public class StartDayActivity extends Activity {
 	class UpdateAvailability extends AsyncTask<String, String, String>{
 
 	
-		ProgressDialog pDialog;
+		private ProgressDialog pDialog;
 
 		@Override
 	        protected void onPreExecute() {
@@ -371,5 +418,111 @@ public class StartDayActivity extends Activity {
 		
 	}
 	
+	class SyncData extends AsyncTask<String, String, String>{
+
+		
+		private ProgressDialog pDialogSync = ProgressDialog.show(StartDayActivity.this, "Please wait", "Syncing..");
+
+
+		@Override
+	        protected void onPreExecute() {
+	            super.onPreExecute();
+	            pDialogSync.show();
+	        }
+		
+		@Override
+		protected String doInBackground(String... args) {
+			try{
+				userDB.open();
+				jobsDB.open();
+				driverLocationsDB.open();
+				Cursor unsyncedUserRecords = userDB.getUsersNotSynced();
+				Cursor unsyncedJobRecords = jobsDB.getJobsNotSynced();
+				Cursor unsyncedDriverLocationRecords = driverLocationsDB.getDriverLocationsNotSynced();
+				
+				
+				for(int i=0;i<unsyncedUserRecords.getCount(); i++){
+					unsyncedUserRecords.moveToPosition(i);
+					List<NameValuePair> driverParams = new ArrayList<NameValuePair>();
+					driverParams.add(new BasicNameValuePair("id", unsyncedUserRecords.getString(8)));
+					driverParams.add(new BasicNameValuePair("key", "9c36c7108a73324100bc9305f581979071d45ee9"));
+					driverParams.add(new BasicNameValuePair("available", unsyncedUserRecords.getString(6)));
+					driverParams.add(new BasicNameValuePair("modified", unsyncedUserRecords.getString(5)));
+					Log.i("AvailableDriver - Params", driverParams.toString());
+					JSONObject jsonDriversResult = jsonParser.makeHttpRequest(updateDriverUrl + unsyncedUserRecords.getString(8) + ".json", "POST", driverParams);
+					Log.i("AvailableDriver - JsonDriversResult", jsonDriversResult.toString());
+					userDB.updateUserRecord("SYNCED", "Yes", unsyncedUserRecords.getString(8));
+				}
+				
+				for(int i=0;i<unsyncedJobRecords.getCount(); i++){
+					unsyncedJobRecords.moveToPosition(i);
+					List<NameValuePair> jobParams = new ArrayList<NameValuePair>();
+					jobParams.add(new BasicNameValuePair("job_id", unsyncedJobRecords.getString(0)));
+					jobParams.add(new BasicNameValuePair("key", "9c36c7108a73324100bc9305f581979071d45ee9"));
+					jobParams.add(new BasicNameValuePair("status", unsyncedJobRecords.getString(4)));
+					jobParams.add(new BasicNameValuePair("completed_date", unsyncedJobRecords.getString(5)));
+					Log.i("FinishedJob - Params", jobParams.toString());
+					JSONObject jsonJobsResult = jsonParser.makeHttpRequest(updateJobUrl + unsyncedJobRecords.getString(0) + ".json", "POST", jobParams);
+					Log.i("UpdateJobFinished - JsonJobsResult", jsonJobsResult.toString());
+					jobsDB.updateJobRecord("SYNCED", "Yes", unsyncedJobRecords.getString(0));
+				}
+				
+				for(int i=0;i<unsyncedDriverLocationRecords.getCount(); i++){
+					unsyncedDriverLocationRecords.moveToPosition(i);
+					List<NameValuePair> locationParams = new ArrayList<NameValuePair>();
+					locationParams.add(new BasicNameValuePair("key", "9c36c7108a73324100bc9305f581979071d45ee9"));
+					locationParams.add(new BasicNameValuePair("driver_id", unsyncedDriverLocationRecords.getString(1)));
+					locationParams.add(new BasicNameValuePair("latitude", unsyncedDriverLocationRecords.getString(3)));
+					locationParams.add(new BasicNameValuePair("longitude", unsyncedDriverLocationRecords.getString(4)));
+					
+					JSONObject jsonDriverLocationResult = jsonParser.makeHttpRequest(addDriverLocationUrl, "POST", locationParams);
+					driverLocationsDB.updateDriverLocationRecord("SYNCED", "Yes", unsyncedDriverLocationRecords.getString(0));
+					Log.i("jsonDriverLocaitonResult", jsonDriverLocationResult.toString());
+				}
+				driverLocationsDB.close();
+				jobsDB.close();
+				userDB.close();
+			}
+			catch (Exception e){
+				e.printStackTrace();
+			}
+			return null;
+		}
+		
+		@Override
+		protected void onPostExecute(String unused){
+			super.onPostExecute(unused);
+			pDialogSync.setOwnerActivity(StartDayActivity.this);
+			pDialogSync.dismiss();
+			
+
+			userDB.open();
+			jobsDB.open();
+			driverLocationsDB.open();
+			Cursor unsyncedUserRecords = userDB.getUsersNotSynced();
+			Cursor unsyncedJobRecords = jobsDB.getJobsNotSynced();
+			Cursor unsyncedDriverLocationRecords = driverLocationsDB.getDriverLocationsNotSynced();
+			
+			int countUnsynced = 0 + unsyncedUserRecords.getCount() + unsyncedJobRecords.getCount() + unsyncedDriverLocationRecords.getCount();
+			if(countUnsynced == 0){
+				Toast.makeText(getApplicationContext(), "All Data Synced", Toast.LENGTH_SHORT).show();
+			}
+			else {
+				Toast.makeText(getApplicationContext(), "Please Sync Again", Toast.LENGTH_SHORT).show();
+			}
+			driverLocationsDB.close();
+			jobsDB.close();
+			userDB.close();
+		}
+		
+	}
+	
+	
+	private boolean isNetworkAvailable() {
+	    ConnectivityManager connectivityManager 
+	          = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+	    NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+	    return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+	}
 	
 }

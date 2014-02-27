@@ -102,6 +102,11 @@ public class UsersDBAdapter {
 		return mCursor;
 	}
 	
+	public Cursor getUsersNotSynced(){
+		return this.mDb.query(DATABASE_TABLE, null,
+				"SYNCED = 'No'",null,null,null,null);
+	}
+	
 	//Update user record.
 	public boolean updateUser(long rowId, String first_name, String last_name, String email, String telephone, String last_logged_in, String available, String synced, String driver_id){
 		ContentValues args = new ContentValues();

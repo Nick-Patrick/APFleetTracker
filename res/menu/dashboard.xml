@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    
+      <item android:id="@+id/menu_item_refresh" 
+        android:title="Refresh" 
+        android:showAsAction="ifRoom" 
+        android:icon="@drawable/navigation_refresh">
+        
+    </item><item android:id="@+id/menu_item_sync" android:title="Sync" android:showAsAction="always" android:icon="@drawable/ic_action_save">
+        
+    </item>
+    
+    <item android:id="@+id/menu_item_overflow" android:icon="@drawable/ic_action_overflow_grey" android:title="More" android:showAsAction="ifRoom">
+        <menu>
+            <item 
+                android:id="@+id/menu_settings"
+                android:title="Settings"/>
+            <item 
+                android:id="@+id/menu_sign_out"
+                android:title="Sign Out"/>
+            <item
+                android:id="@+id/menu_quit"
+                android:title="Quit"/>
+        </menu>
+        
+    </item>
+    
+
+</menu>

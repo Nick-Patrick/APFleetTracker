@@ -1,167 +1,190 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
+    android:orientation="vertical"
     tools:context=".PendingJobsActivity$DummySectionFragment" >
 
-    <TextView
-        android:id="@+id/pending_jobs_user"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
-    
-
-
-    <LinearLayout
-        android:id="@+id/linearLayout1"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical" >
+        android:layout_height="388dp"
+        android:layout_weight="0.42"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin" >
 
         <TextView
-            android:id="@+id/job_name_label"
+            android:id="@+id/pending_jobs_user"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/pending_jobs_job_label"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
             android:textAppearance="?android:attr/textAppearanceSmall" />
-        
-        <TextView
-	        android:id="@+id/job_name"
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content" 
-	        android:textAppearance="?android:attr/textAppearanceLarge" 
-	        android:layout_marginBottom="14dp" />
-        
-        <TextView
-            android:id="@+id/collection_name_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/pending_jobs_collection_label"
-            android:textAppearance="?android:attr/textAppearanceSmall" />
-        
-        <TextView
-	        android:id="@+id/collection_name"
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content" 
-	        android:textAppearance="?android:attr/textAppearanceLarge"
-	        android:layout_marginBottom="14dp" />
-        
-        <TextView
-            android:id="@+id/dropoff_name_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/pending_jobs_dropoff_label"
-            android:textAppearance="?android:attr/textAppearanceSmall" />
-        
-        <TextView
-	        android:id="@+id/dropoff_name"
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content" 
-	        android:textAppearance="?android:attr/textAppearanceLarge" 
-	        android:layout_marginBottom="14dp" />
-        
-        <TextView
-            android:id="@+id/vehicle_name_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/pending_jobs_vehicle_label"
-            android:textAppearance="?android:attr/textAppearanceSmall" />
-        
-        <TextView
-	        android:id="@+id/vehicle_name"
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content" 
-	        android:textAppearance="?android:attr/textAppearanceLarge" 
-	        android:layout_marginBottom="14dp" />
-        
-        <TextView
-            android:id="@+id/packages_count_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/pending_jobs_packages_label"
-            android:textAppearance="?android:attr/textAppearanceSmall" />
-        
-        <TextView
-	        android:id="@+id/packages_count"
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content" 
-	        android:textAppearance="?android:attr/textAppearanceLarge" 
-	        android:layout_marginBottom="14dp" />
-        
-        <TextView
-            android:id="@+id/additional_details_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/pending_jobs_additional_details_label"
-            android:textAppearance="?android:attr/textAppearanceSmall" />
-        
-        <TextView
-	        android:id="@+id/additional_details"
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content" 
-	        android:textAppearance="?android:attr/textAppearanceLarge" 
-	        android:layout_marginBottom="14dp" />
-	                   
-        <Button
-        android:id="@+id/pending_jobs_more_details"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/pending_jobs_button_more_details" />
-        
-        <TextView
-	        android:id="@+id/due_by"
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content"
-	        android:textAppearance="?android:attr/textAppearanceSmall" />
-        
 
-
+        <ScrollView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+                    
         <LinearLayout
+            android:id="@+id/linearLayout1"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" 
-            android:orientation="horizontal"
-            android:layout_gravity="right"
-            android:weightSum="2">
-            
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/job_name_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/pending_jobs_job_label"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
+
+            <TextView
+                android:id="@+id/job_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="14dp"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            <TextView
+                android:id="@+id/collection_name_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/pending_jobs_collection_label"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
+
+            <TextView
+                android:id="@+id/collection_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="14dp"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            <TextView
+                android:id="@+id/dropoff_name_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/pending_jobs_dropoff_label"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
+
+            <TextView
+                android:id="@+id/dropoff_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="14dp"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            <TextView
+                android:id="@+id/vehicle_name_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/pending_jobs_vehicle_label"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
+
+            <TextView
+                android:id="@+id/vehicle_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="14dp"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            <TextView
+                android:id="@+id/packages_count_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/pending_jobs_packages_label"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
+
+            <TextView
+                android:id="@+id/packages_count"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="6dp"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+
+
+            <TextView
+                android:id="@+id/due_by"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textSize="@dimen/text_small" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:orientation="horizontal"
+                android:weightSum="2" >
+
+                <TextView
+                    android:id="@+id/assigned_by"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/pending_jobs_assigned_by_label"
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
+
+                <TextView
+                    android:id="@+id/assigned_at"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="6dp"
+                    android:layout_weight="1"
+                    android:text="@string/pending_jobs_assigned_at_label"
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
+
+            </LinearLayout>
         </LinearLayout>
         
-    </LinearLayout>
-    
-    <Button
-        android:id="@+id/start_job_button"
+        </ScrollView>
+    </RelativeLayout>
+
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/linearLayout1"
-        android:layout_below="@+id/linearLayout1"
-        android:text="@string/pending_jobs_button_accept_job" />
-    
-    <TextView
-        android:id="@+id/assigned_by"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_weight="1"
-        android:text="@string/pending_jobs_assigned_by_label"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
+        android:layout_height="64dp"
+        android:layout_weight="0.00">
 
+        <TableLayout
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"
+            android:stretchColumns="*" 
+            android:layout_alignParentBottom="true">
 
+            <TableRow
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:gravity="center_horizontal" >
 
-    <TextView
-        android:id="@+id/assigned_at"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginLeft="6dp"
-        android:layout_toRightOf="@+id/assigned_by"
-        android:layout_weight="1"
-        android:text="@string/pending_jobs_assigned_at_label"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
+                <Button
+                    android:id="@+id/pending_jobs_more_details"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:background="@drawable/button_black_selector"
+                    android:paddingTop="20dp"
+                    android:paddingBottom="20dp"
+                    android:paddingLeft="6dp"
+                    android:drawableLeft="@drawable/ic_action_info"
+                    android:text="@string/pending_jobs_button_more_details"
+                    android:textColor="@color/White"
+                    android:textSize="@dimen/text_medium_small" />
 
-</RelativeLayout>
+                <Button
+                    android:id="@+id/start_job_button"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:paddingTop="20dp"
+                    android:paddingBottom="20dp"
+                    android:paddingRight="6dp"
+                    android:background="@drawable/button_blue_selector"
+                    android:drawableRight="@drawable/ic_action_send"
+                    android:text="@string/pending_jobs_button_accept_job"
+                    android:textColor="@color/White"
+                    android:textSize="@dimen/text_medium_small" />
+            </TableRow>
+        </TableLayout>
+    </RelativeLayout>
+
+</LinearLayout>

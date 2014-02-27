@@ -1,95 +1,126 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
+    android:orientation="vertical"
     tools:context=".ActiveJobActivity" >
 
-
-
-    <Button
-        android:id="@+id/active_job_complete_job_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:text="Complete job" />
-
-    <TextView
-        android:id="@+id/active_job_job_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/active_job_name"
-        android:layout_alignTop="@+id/active_job_name"
-        android:text="JOB"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
-
-    <TextView
-        android:id="@+id/active_job_job_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/active_job_more_details"
-        android:layout_alignLeft="@+id/active_job_name"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-
-    <TextView
-        android:id="@+id/active_job_job_start"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/active_job_job_name"
-        android:layout_below="@+id/active_job_job_name"
-        android:layout_marginTop="14dp"
-        android:text="STARTED: "
-        android:textAppearance="?android:attr/textAppearanceSmall" />
-
-    <TextView
-        android:id="@+id/active_job_job_time_driving_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/active_job_job_start"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="15dp"
-        android:text="TIME DRIVING"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
-
-    <TextView
-        android:id="@+id/active_job_job_time_driving"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/active_job_job_time_driving_label"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="14dp"
-        android:text="00:00"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
     
-    <TextView
-        android:id="@+id/active_job_job_miles"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:text="0"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        
+        
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="252dp"
+        android:layout_weight="0.76"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin" >
 
-    <TextView
-        android:id="@+id/active_job_job_miles_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/active_job_job_time_driving"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp"
-        android:text="MILES"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
+       <TextView
+            android:id="@+id/active_job_job_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:gravity="center"
+            android:drawableBottom="@drawable/ic_action_search"
+            android:background="@drawable/text_view_selector"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
 
-    <Button
-        android:id="@+id/active_job_more_details"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:text="More Details" />
+        <TextView
+            android:id="@+id/active_job_job_time_driving_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/active_job_job_start"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="15dp"
+            android:text="TIME DRIVING"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
 
-</RelativeLayout>
+        <TextView
+            android:id="@+id/active_job_job_time_driving"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/active_job_job_time_driving_label"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="14dp"
+            android:text="00:00"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <TextView
+            android:id="@+id/active_job_job_miles_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/active_job_job_time_driving"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="16dp"
+            android:text="MILES"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+
+        <TextView
+            android:id="@+id/active_job_job_miles"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/active_job_job_miles_label"
+            android:layout_centerHorizontal="true"
+            android:text="0"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+
+ 
+
+        <TextView
+            android:id="@+id/active_job_job_start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:gravity="center"
+            android:layout_below="@+id/active_job_job_name"
+            android:layout_marginTop="16dp"
+            android:text="STARTED: "
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+
+        <View
+            android:id="@+id/separator"
+            android:layout_width="match_parent"
+            android:layout_height="0.2dp"
+            android:layout_above="@+id/active_job_job_time_driving_label"
+            android:layout_alignParentRight="true"
+            android:background="@android:color/darker_gray"
+            android:visibility="visible" />
+
+        <Switch
+            android:id="@+id/driving_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="34dp"
+            android:text="Not Driving" />
+
+    </RelativeLayout>
+
+    
+    
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="61dp"
+        android:layout_weight="0.00" >
+
+        <Button
+            android:id="@+id/active_job_complete_job_button"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:background="@drawable/button_black_selector"
+            android:padding="20dp"
+            android:drawableEnd="@drawable/ic_action_tick_blue"
+            android:text="Complete job"
+            android:textColor="@color/White"
+            android:textSize="@dimen/text_medium_small" />
+           
+           
+    </RelativeLayout>
+
+</LinearLayout>

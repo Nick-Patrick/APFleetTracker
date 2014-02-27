@@ -3,68 +3,59 @@
     android:layout_height="match_parent"
     android:layout_centerHorizontal="true"
     android:layout_centerVertical="true"
-    android:layout_marginTop="10dp"
     android:background="@color/GhostWhite"
     android:orientation="vertical"
     android:padding="12dp" >
          
-     <LinearLayout
-         android:layout_width="match_parent"
-         android:layout_height="wrap_content"
-         android:gravity="center">
+     <ScrollView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+    
+	<LinearLayout 
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:orientation="vertical">
 		
-		<TextView
-             android:id="@+id/user_name"
-             android:layout_width="wrap_content"
-             android:layout_height="wrap_content"
-             android:layout_marginTop="32dp"
-             android:layout_marginBottom="30dp"
-             android:textSize="@dimen/text_medium" />
-		
-		
-		
-	</LinearLayout>
-	
-     <View
+		<!-- <TextView
+		    android:id="@+id/user_name"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_marginBottom="4dp"
+		    android:gravity="center" 
+		    android:textSize="@dimen/text_medium" />
+	 -->
+     	<View
 	        android:layout_width="match_parent"
 	        android:layout_height="0.2dp"
 	        android:id="@+id/separator"
 	        android:visibility="visible"
-           
 	        android:background="@android:color/darker_gray"/>
 
      	<LinearLayout
      	    android:id="@+id/user_active_job_area"
      	    android:layout_width="match_parent"
      	    android:layout_height="wrap_content"
-     	    android:layout_marginTop="12dp"
+     	    android:paddingTop="12dp"
      	    android:orientation="vertical"
      	    android:background="@drawable/text_view_selector"
-     	    android:gravity="center">
+     	    android:gravity="center"
+     	    android:focusable="true"
+            android:clickable="true">
            
+
+     	    
            <LinearLayout
                android:layout_width="wrap_content"
                android:layout_height="wrap_content"
-               android:gravity="center"
-               android:focusable="true"
-               android:clickable="true">
-
-              
-
-               <ImageView
-                   android:id="@+id/imageView1"
-                   android:layout_width="wrap_content"
-                   android:layout_height="wrap_content"
-                   android:layout_centerHorizontal="true"
-                   android:layout_centerVertical="true"
-                   android:src="@drawable/ic_action_wheel" />
+               android:gravity="center">
                
                 <TextView
-                   android:id="@+id/user_active_job_label"
-                   android:layout_width="wrap_content"
-                   android:layout_height="wrap_content"
-                   android:text="Current Job"
-                   android:textSize="@dimen/text_medium_small" />
+                    android:id="@+id/user_active_job_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Current Job"
+                    android:drawableTop="@drawable/ic_action_wheel"
+                    android:textSize="@dimen/text_medium_small" />
       
       		</LinearLayout>
 
@@ -75,7 +66,7 @@
              android:layout_gravity="center"
              android:layout_marginBottom="12dp"
              android:text="None"
-             android:textSize="@dimen/text_large" />
+             android:textSize="@dimen/text_medium" />
 
   		</LinearLayout>
   		
@@ -85,28 +76,29 @@
         android:layout_height="0.2dp"
         android:id="@+id/separator"
         android:visibility="visible"
-        android:layout_marginBottom="12dp"
         android:background="@android:color/darker_gray"/>
 
+        
+      	<LinearLayout
+  	    android:id="@+id/user_pending_jobs_area"
+  	    android:layout_width="match_parent"
+  	    android:layout_height="wrap_content"
+  	    android:paddingTop="12dp"
+  	    android:orientation="vertical"
+  	    android:background="@drawable/text_view_selector"
+  	    android:gravity="center">
          
          <LinearLayout
-		     android:layout_width="match_parent"
-		     android:layout_height="wrap_content"
-		     android:gravity="center">
-
-		     <ImageView
-		         android:id="@+id/imageView1"
-		         android:layout_width="wrap_content"
-		         android:layout_height="wrap_content"
-		         android:layout_centerHorizontal="true"
-		         android:layout_centerVertical="true"
-		         android:src="@drawable/ic_action_list" />
+		     android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:gravity="center">
 	     
 	         <TextView 
 			        android:id="@+id/user_pending_jobs_label"
 			        android:layout_width="wrap_content"
 			        android:layout_height="wrap_content" 
 			        android:text="Pending Jobs"
+			        android:drawableTop="@drawable/ic_action_list"
 			        android:textSize="@dimen/text_medium_small" />
 	     
     	 </LinearLayout>
@@ -119,31 +111,32 @@
         android:layout_marginBottom="12dp"
         android:text="0"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textSize="@dimen/text_very_large" />
+        android:textSize="@dimen/text_large" />
     
-
+    	 </LinearLayout>
+    
     
     <View
         android:layout_width="match_parent"
         android:layout_height="0.2dp"
         android:id="@+id/separator"
         android:visibility="visible"
-        android:layout_marginBottom="12dp"
         android:background="@android:color/darker_gray"/>
     
     
+   	<LinearLayout
+    android:id="@+id/user_completed_jobs_area"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="12dp"
+    android:orientation="vertical"
+    android:background="@drawable/text_view_selector"
+    android:gravity="center">
+
     <LinearLayout
-     android:layout_width="match_parent"
-     android:layout_height="wrap_content"
-     android:gravity="center">
-
-    
-
-	     <ImageView
-	         android:id="@+id/imageView1"
-	         android:layout_width="wrap_content"
-	         android:layout_height="wrap_content"
-	         android:src="@drawable/ic_action_tick" />
+     android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:gravity="center">
 	     
           <TextView
 	         android:id="@+id/user_completed_jobs_label"
@@ -151,6 +144,7 @@
 	         android:layout_height="wrap_content"
 	         android:text="Completed Jobs"
 	         android:textAppearance="?android:attr/textAppearanceSmall"
+	         android:drawableTop="@drawable/ic_action_tick"
 	         android:textSize="@dimen/text_medium_small" />
      
      </LinearLayout>
@@ -164,10 +158,20 @@
         android:layout_marginBottom="12dp"
         android:text="0"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textSize="@dimen/text_very_large" />
+        android:textSize="@dimen/text_large" />
     
-
+    	 </LinearLayout>
+    
+    
      <View
+        android:layout_width="match_parent"
+        android:layout_height="0.2dp"
+        android:id="@+id/separator"
+        android:visibility="visible"
+        android:layout_marginBottom="6dp"
+        android:background="@android:color/darker_gray"/>
+     
+      <View
         android:layout_width="match_parent"
         android:layout_height="0.2dp"
         android:id="@+id/separator"
@@ -180,16 +184,16 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="Today's Stats"
-        android:layout_marginTop="12dp"
-        android:layout_marginBottom="8dp"
-        android:textSize="@dimen/text_medium" />
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="4dp"
+        android:textSize="@dimen/text_medium_small" />
      
      <TextView
         android:id="@+id/start_day_current_date_time"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:textSize="@dimen/text_medium_small" />
+        android:textSize="@dimen/text_small" />
 
      <LinearLayout
          android:layout_width="match_parent"
@@ -235,16 +239,9 @@
 
      </LinearLayout>
      
-       <View
-        android:layout_width="match_parent"
-        android:layout_height="0.2dp"
-        android:id="@+id/separator"
-        android:visibility="visible"
-        android:layout_marginBottom="20dp"
-        android:layout_marginTop="20dp"
-        android:background="@android:color/darker_gray"/>
+</LinearLayout>
      
- 
+ </ScrollView>
     
    
         

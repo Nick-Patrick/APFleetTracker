@@ -307,8 +307,7 @@ public class ActiveJobDetailsActivity extends FragmentActivity {
 			jobDueDateTextView.setText(jobDueDate);
 			jobAdditionalDetailsTextView.setText(jobAdditionalDetails);
 			
-			Button jobMapButton = (Button)jobView.findViewById(R.id.job_details_view_map);
-			jobMapButton.setVisibility(View.GONE);
+
 			
 			return jobView;
 		}

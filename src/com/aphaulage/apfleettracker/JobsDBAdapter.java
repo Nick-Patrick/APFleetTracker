@@ -157,6 +157,11 @@ public class JobsDBAdapter {
 		return this.mDb.update(DATABASE_TABLE, args, ID + "=" + id, null) > 0;
 	}
 	
+	public Cursor getJobsNotSynced(){
+		return this.mDb.query(DATABASE_TABLE, null,
+				"SYNCED = 'No'",null,null,null,null);
+	}
+	
 	public boolean updateJobRecord(String column, String value, String job_id){
 		ContentValues args = new ContentValues();
 		args.put(column.toUpperCase(), value);

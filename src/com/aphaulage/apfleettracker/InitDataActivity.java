@@ -25,6 +25,7 @@ public class InitDataActivity extends Activity {
 	VehiclesDBAdapter vehiclesDB;
 	PackagesDBAdapter packagesDB;
 	JobPackagesDBAdapter jobPackagesDB;
+	DriverSettingsDBAdapter driverSettingsDB;
 	
 	Cursor usersCursor;
 	Cursor jobsCursor;
@@ -53,6 +54,11 @@ public class InitDataActivity extends Activity {
 		vehiclesDB = new VehiclesDBAdapter(getApplicationContext());
 		packagesDB = new PackagesDBAdapter(getApplicationContext());
 		jobPackagesDB = new JobPackagesDBAdapter(getApplicationContext());
+		driverSettingsDB = new DriverSettingsDBAdapter(getApplicationContext());
+		
+		driverSettingsDB.open();
+		driverSettingsDB.createDriverSetting();
+		driverSettingsDB.close();
 		
 		userDB.open();
 		usersCursor = userDB.getAllUsers();
@@ -73,7 +79,7 @@ class InitData extends AsyncTask<String, String, String>{
 		@Override
 	        protected void onPreExecute() {
 	            super.onPreExecute();
-	            pDialog = ProgressDialog.show(InitDataActivity.this, "Starting Day", "Loading..");
+	            pDialog = ProgressDialog.show(InitDataActivity.this, "Loading Day", "Checking for jobs..");
 	            pDialog.show();
 	        }
 		

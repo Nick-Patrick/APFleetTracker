@@ -27,10 +27,12 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class PendingJobsActivity extends FragmentActivity {
 	
@@ -297,7 +299,6 @@ public class PendingJobsActivity extends FragmentActivity {
 			TextView dropoffNameTextView = (TextView) rootView.findViewById(R.id.dropoff_name);
 			TextView vehicleNameTextView = (TextView) rootView.findViewById(R.id.vehicle_name);
 			TextView packagesCountTextView = (TextView) rootView.findViewById(R.id.packages_count);
-			TextView additionalDetailsTextView = (TextView) rootView.findViewById(R.id.additional_details);
 			TextView assignedByTextView = (TextView) rootView.findViewById(R.id.assigned_by);
 			TextView assignedAtTextView = (TextView) rootView.findViewById(R.id.assigned_at);
 			
@@ -315,13 +316,7 @@ public class PendingJobsActivity extends FragmentActivity {
 				vehicleNameTextView.setText(vehicleName);
 				packagesCountTextView.setText(packagesCount);
 			
-			if(additionalDetails.length() > 1){
-				additionalDetailsTextView.setText(additionalDetails);
-			}
-			else {
-				TextView additionalDetailsLabel = (TextView) rootView.findViewById(R.id.additional_details_label);
-				additionalDetailsLabel.setText("");
-			}
+
 			assignedAtTextView.setText("At: " + assignedAt);
 			assignedByTextView.setText("Assigned By: " + assignedBy);
 			
@@ -348,9 +343,14 @@ public class PendingJobsActivity extends FragmentActivity {
 			jobsDB.close();
 
 			if(activeJobsCursor.getCount() > 0){
+				
+				startJobButton.append(" (N/A)");
+				
 				startJobButton.setEnabled(false);
-				startJobButton.append(" (Already a job active)");
+
 			}
+			
+			else {
 			
 			startJobButton.setOnClickListener(new View.OnClickListener() {
 				
@@ -375,6 +375,7 @@ public class PendingJobsActivity extends FragmentActivity {
 				}
 			});
 		
+			}
 			return rootView;
 		}
 	}
