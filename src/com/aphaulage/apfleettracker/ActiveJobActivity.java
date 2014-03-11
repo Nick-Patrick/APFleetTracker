@@ -46,11 +46,11 @@ GooglePlayServicesClient.OnConnectionFailedListener, LocationListener, com.googl
     // Milliseconds per second
     private static final int MILLISECONDS_PER_SECOND = 1000;
     // Update frequency in seconds
-    public static final int UPDATE_INTERVAL_IN_SECONDS = 10;
+    public static final int UPDATE_INTERVAL_IN_SECONDS = 20;
     // Update frequency in milliseconds
     private static final long UPDATE_INTERVAL = MILLISECONDS_PER_SECOND * UPDATE_INTERVAL_IN_SECONDS;
     // The fastest update frequency, in seconds
-    private static final int FASTEST_INTERVAL_IN_SECONDS = 10;
+    private static final int FASTEST_INTERVAL_IN_SECONDS = 20;
     // A fast frequency ceiling in milliseconds
     private static final long FASTEST_INTERVAL =
             MILLISECONDS_PER_SECOND * FASTEST_INTERVAL_IN_SECONDS;
@@ -85,9 +85,13 @@ GooglePlayServicesClient.OnConnectionFailedListener, LocationListener, com.googl
 	JsonParser jsonParser = new JsonParser();
 	private static final String updateJobUrl = "http://aphaulage.co.uk/apTracker/jobs/updateActiveJob/";
 	private static final String updateDriverUrl = "http://aphaulage.co.uk/apTracker/drivers/update/";
+	private static final String updateVehicleUrl = "http://aphaulage.co.uk/apTracker/vehicles/updateVehicleById.json";
 	private static final String addDriverLocationUrl = "http://aphaulage.co.uk/apTracker/driverLocations/addDriverLocation.json";
 	
 	private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
+	
+	protected double previousLat = 0;
+	protected double previousLng = 0; 
 	
     @Override
     protected void onStart() {
@@ -164,7 +168,7 @@ GooglePlayServicesClient.OnConnectionFailedListener, LocationListener, com.googl
         */
        if(mLocationClient == null){
     	   mLocationClient = new LocationClient(this, this, this);
-    	   mUpdatesRequested = false;
+    	   mUpdatesRequested = true;
        }
        
        completedJobButton = (Button)findViewById(R.id.active_job_complete_job_button);
@@ -226,9 +230,12 @@ GooglePlayServicesClient.OnConnectionFailedListener, LocationListener, com.googl
 		    AlertDialog alert = builder.create();
 		    alert.show();
 			}
-    	   
+		
        });
-     
+       if(!mLocationClient.isConnected()){
+    	   mLocationClient.connect();
+       }
+		mUpdatesRequested = true;
        
        moreDetailsTextView = (TextView)findViewById(R.id.active_job_job_name);
        moreDetailsTextView.setOnClickListener(new OnClickListener(){
@@ -251,12 +258,12 @@ GooglePlayServicesClient.OnConnectionFailedListener, LocationListener, com.googl
        jobStartedTextView.append(jobDetailsCursor.getString(13));
        timeTravelledTextView = (TextView)findViewById(R.id.active_job_job_time_driving);
        timeTravelledTextView.setText("01:02*");
-       milesTravelledTextView = (TextView)findViewById(R.id.active_job_job_miles);
-       milesTravelledTextView.setText("102*");
+      // milesTravelledTextView = (TextView)findViewById(R.id.active_job_job_miles);
+      // milesTravelledTextView.setText("102*");
        
 
-       userDrivingSwitch = (Switch)findViewById(R.id.driving_switch);
-       userDrivingSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener(){
+      // userDrivingSwitch = (Switch)findViewById(R.id.driving_switch);
+/*       userDrivingSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener(){
 
 		@Override
 		public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
@@ -285,6 +292,7 @@ GooglePlayServicesClient.OnConnectionFailedListener, LocationListener, com.googl
 
 
        });
+      */ 
        driverSettingsDB.open();
 
        Cursor driverSettingsCursor = driverSettingsDB.getAllDriverSettings();
@@ -292,10 +300,10 @@ GooglePlayServicesClient.OnConnectionFailedListener, LocationListener, com.googl
        trackingEnabled = driverSettingsCursor.getString(0);
        Log.i("tracking", trackingEnabled);
        if(trackingEnabled.equals("Yes")){
-    	   userDrivingSwitch.setChecked(true);
+    	   //userDrivingSwitch.setChecked(true);
        }
        else {
-    	   userDrivingSwitch.setChecked(false);
+    	   //userDrivingSwitch.setChecked(false);
        }
        driverSettingsDB.close();
 	}
@@ -601,19 +609,38 @@ Log.i("error", "236");
 
 	@Override
 	public void onLocationChanged(Location location) {
-		Log.i("ActiveJobActivity", "Lat: " + location.getLatitude());
+		float distanceInMeters = 0;
+		if(previousLat != 0){
+			Location prevLocation = new Location("");
+			prevLocation.setLatitude(previousLat);
+			prevLocation.setLongitude(previousLng);
+			distanceInMeters = location.distanceTo(prevLocation);
+			//44 meters per 20 seconds = 5mph. 
+			if(distanceInMeters>44){ 			// as the crow flies distance
+				driverLocationsDB.open();
+				driverLocationsDB.createDriverLocation(driverId, location.getLatitude(), location.getLongitude(), "No");
+				//Log.i("ActiveJobActivity", driverId);
+				driverLocationsDB.close();
+				new AddDriverLocation().execute();
+			}
+
+		}
+
+		/*Log.i("ActiveJobActivity", "Lat: " + location.getLatitude());
 		Log.i("ActiveJobActivity", "Lng: " + location.getLongitude());
 		Log.i("ActiveJobActivity", "Speed: " + location.getSpeed());
-		Log.i("ActiveJobActivity", "Accuracy: " + location.getAccuracy());
-		Toast.makeText(getApplicationContext(), String.valueOf(location.getSpeed()), Toast.LENGTH_SHORT).show();
-		if(location.getSpeed() > 3) { //check if speed is moving.
+		Log.i("ActiveJobActivity", "Accuracy: " + location.getAccuracy());*/
+		//Toast.makeText(getApplicationContext(), String.valueOf(location.getSpeed()), Toast.LENGTH_SHORT).show();
+		/*if(location.getSpeed() > 3) { //check if speed is moving.
 			driverLocationsDB.open();
 			driverLocationsDB.createDriverLocation(driverId, location.getLatitude(), location.getLongitude(), "No");
 			//Log.i("ActiveJobActivity", driverId);
 
 			driverLocationsDB.close();
 			new AddDriverLocation().execute();
-		}
+		}*/
+		previousLat = location.getLatitude();
+		previousLng = location.getLongitude();
 	}
 
 	@Override

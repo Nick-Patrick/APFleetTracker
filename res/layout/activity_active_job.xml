@@ -47,25 +47,6 @@
             android:text="00:00"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
-        <TextView
-            android:id="@+id/active_job_job_miles_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/active_job_job_time_driving"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="16dp"
-            android:text="MILES"
-            android:textAppearance="?android:attr/textAppearanceSmall" />
-
-        <TextView
-            android:id="@+id/active_job_job_miles"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/active_job_job_miles_label"
-            android:layout_centerHorizontal="true"
-            android:text="0"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
-
 
  
 
@@ -88,15 +69,6 @@
             android:layout_alignParentRight="true"
             android:background="@android:color/darker_gray"
             android:visibility="visible" />
-
-        <Switch
-            android:id="@+id/driving_switch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="34dp"
-            android:text="Not Driving" />
 
     </RelativeLayout>
 

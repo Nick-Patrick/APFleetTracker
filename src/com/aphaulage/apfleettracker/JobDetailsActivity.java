@@ -271,6 +271,22 @@ public class JobDetailsActivity extends FragmentActivity {
 				return "Package 4";
 			case 8:
 				return "Package 5";
+			case 9:
+				return "Package 6";
+			case 10:
+				return "Package 7";
+			case 11:
+				return "Package 8";
+			case 12:
+				return "Package 9";
+			case 13:
+				return "Package 10";
+			case 14:
+				return "Package 11";
+			case 15:
+				return "Package 12";
+			case 16:
+				return "Package 13";
 			}
 			return null;
 		}
