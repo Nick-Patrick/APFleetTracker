@@ -1,5 +1,6 @@
 package com.aphaulage.apfleettracker;
 
+import java.sql.Date;
 import java.util.Locale;
 
 import android.content.ContentValues;
@@ -60,10 +61,11 @@ public class DriverLocationsDBAdapter {
 	}
 	
 	//Create a new user. Return 1 if create successful. Otherwise return -1.
-	public long createDriverLocation(String driver_id, Double latitude, Double longitude, String synced){
+	public long createDriverLocation(String driver_id, String currentTime, Double latitude, Double longitude, String synced){
 		try {
 			ContentValues initialValues = new ContentValues();
 			initialValues.put(DRIVER_ID, driver_id);
+			initialValues.put(DATE_TIME_STAMP, currentTime);
 			initialValues.put(LATITUDE, latitude);
 			initialValues.put(LONGITUDE, longitude);
 			initialValues.put(SYNCED, synced);

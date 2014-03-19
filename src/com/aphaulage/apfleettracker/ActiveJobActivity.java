@@ -12,14 +12,17 @@ import org.json.JSONObject;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.database.Cursor;
 import android.location.Location;
 import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.support.v4.app.NavUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -28,8 +31,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -46,11 +47,11 @@ GooglePlayServicesClient.OnConnectionFailedListener, LocationListener, com.googl
     // Milliseconds per second
     private static final int MILLISECONDS_PER_SECOND = 1000;
     // Update frequency in seconds
-    public static final int UPDATE_INTERVAL_IN_SECONDS = 20;
+    public static final int UPDATE_INTERVAL_IN_SECONDS = 10;
     // Update frequency in milliseconds
     private static final long UPDATE_INTERVAL = MILLISECONDS_PER_SECOND * UPDATE_INTERVAL_IN_SECONDS;
     // The fastest update frequency, in seconds
-    private static final int FASTEST_INTERVAL_IN_SECONDS = 20;
+    private static final int FASTEST_INTERVAL_IN_SECONDS = 10;
     // A fast frequency ceiling in milliseconds
     private static final long FASTEST_INTERVAL =
             MILLISECONDS_PER_SECOND * FASTEST_INTERVAL_IN_SECONDS;
@@ -91,12 +92,18 @@ GooglePlayServicesClient.OnConnectionFailedListener, LocationListener, com.googl
 	private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
 	
 	protected double previousLat = 0;
-	protected double previousLng = 0; 
+	protected double previousLng = 0;
+	protected PowerManager.WakeLock mWakeLock; 
+	LocationManager locationManager;
 	
     @Override
     protected void onStart() {
     	super.onStart();
-
+    	final PowerManager pm = (PowerManager)getSystemService(Context.POWER_SERVICE);
+    	this.mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Wakelock");
+    	
+    	mWakeLock.acquire();
+    	
 
     }
     
@@ -258,41 +265,7 @@ GooglePlayServicesClient.OnConnectionFailedListener, LocationListener, com.googl
        jobStartedTextView.append(jobDetailsCursor.getString(13));
        timeTravelledTextView = (TextView)findViewById(R.id.active_job_job_time_driving);
        timeTravelledTextView.setText("01:02*");
-      // milesTravelledTextView = (TextView)findViewById(R.id.active_job_job_miles);
-      // milesTravelledTextView.setText("102*");
-       
 
-      // userDrivingSwitch = (Switch)findViewById(R.id.driving_switch);
-/*       userDrivingSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener(){
-
-		@Override
-		public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
-			driverSettingsDB.open();
-			if (mUpdatesRequested == false){
-				userDrivingSwitch.setText("Currently Driving");
-				  if(!mLocationClient.isConnected()){
-			    	   mLocationClient.connect();
-			       }
-					mUpdatesRequested = true;
-				  Toast.makeText(getApplicationContext(), "Tracking Enabled", Toast.LENGTH_SHORT).show();
-				  
-				  driverSettingsDB.updateDriverSettingRecord("TRACKING_STATUS", "Yes");
-			}
-			else {
-				userDrivingSwitch.setText("Not Driving");
-				 if(mLocationClient.isConnected()){
-			    	   mLocationClient.disconnect();
-			       }
-				Toast.makeText(getApplicationContext(), "Tracking Disabled", Toast.LENGTH_SHORT).show();
-				mUpdatesRequested = false;
-				  driverSettingsDB.updateDriverSettingRecord("TRACKING_STATUS", "No");
-
-			}
-		}
-
-
-       });
-      */ 
        driverSettingsDB.open();
 
        Cursor driverSettingsCursor = driverSettingsDB.getAllDriverSettings();
@@ -476,6 +449,7 @@ GooglePlayServicesClient.OnConnectionFailedListener, LocationListener, com.googl
 						List<NameValuePair> locationParams = new ArrayList<NameValuePair>();
 						locationParams.add(new BasicNameValuePair("key", "9c36c7108a73324100bc9305f581979071d45ee9"));
 						locationParams.add(new BasicNameValuePair("driver_id", driverLocationsCursor.getString(1)));
+						locationParams.add(new BasicNameValuePair("date_time_stamp", driverLocationsCursor.getString(2)));
 						locationParams.add(new BasicNameValuePair("latitude", driverLocationsCursor.getString(3)));
 						locationParams.add(new BasicNameValuePair("longitude", driverLocationsCursor.getString(4)));
 						
@@ -616,49 +590,68 @@ Log.i("error", "236");
 			prevLocation.setLongitude(previousLng);
 			distanceInMeters = location.distanceTo(prevLocation);
 			//44 meters per 20 seconds = 5mph. 
-			if(distanceInMeters>44){ 			// as the crow flies distance
+			//if(distanceInMeters>44){ 			// as the crow flies distance
 				driverLocationsDB.open();
-				driverLocationsDB.createDriverLocation(driverId, location.getLatitude(), location.getLongitude(), "No");
-				//Log.i("ActiveJobActivity", driverId);
+				SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				String dateFormatted = s.format(new Date());
+				driverLocationsDB.createDriverLocation(driverId, dateFormatted, location.getLatitude(), location.getLongitude(), "No");
 				driverLocationsDB.close();
 				new AddDriverLocation().execute();
-			}
+			//}
 
 		}
 
-		/*Log.i("ActiveJobActivity", "Lat: " + location.getLatitude());
-		Log.i("ActiveJobActivity", "Lng: " + location.getLongitude());
-		Log.i("ActiveJobActivity", "Speed: " + location.getSpeed());
-		Log.i("ActiveJobActivity", "Accuracy: " + location.getAccuracy());*/
-		//Toast.makeText(getApplicationContext(), String.valueOf(location.getSpeed()), Toast.LENGTH_SHORT).show();
-		/*if(location.getSpeed() > 3) { //check if speed is moving.
-			driverLocationsDB.open();
-			driverLocationsDB.createDriverLocation(driverId, location.getLatitude(), location.getLongitude(), "No");
-			//Log.i("ActiveJobActivity", driverId);
-
-			driverLocationsDB.close();
-			new AddDriverLocation().execute();
-		}*/
+		
 		previousLat = location.getLatitude();
 		previousLng = location.getLongitude();
 	}
 
 	@Override
-	public void onProviderDisabled(String arg0) {
+	public void onProviderDisabled(String provider) {
 		// TODO Auto-generated method stub
-		
+		if(provider.equals("LocationManager.GPS_PROVIDER")){
+			Log.i("Active Job Location", "GPS Disabled");
+		}
+		locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+		if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+			//locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+			mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+		} else {
+			//locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
+			mLocationRequest.setPriority(LocationRequest.PRIORITY_LOW_POWER);
+		}
+		mLocationClient.removeLocationUpdates(this);
+		mLocationClient.requestLocationUpdates(mLocationRequest, this);
 	}
 
 	@Override
-	public void onProviderEnabled(String arg0) {
+	public void onProviderEnabled(String provider) {
 		// TODO Auto-generated method stub
-		
+		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+		if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+			//locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+			mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+		} else {
+			//locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
+			mLocationRequest.setPriority(LocationRequest.PRIORITY_LOW_POWER);
+		}
+		mLocationClient.removeLocationUpdates(this);
+		mLocationClient.requestLocationUpdates(mLocationRequest, this);
 	}
 
 	@Override
-	public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
+	public void onStatusChanged(String provider, int status, Bundle extras) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	@Override
+	public void onDestroy(){
+		super.onDestroy();
+		if (mWakeLock.isHeld())
+		{
+		this.mWakeLock.release();
+		}
 	}
 
 }
