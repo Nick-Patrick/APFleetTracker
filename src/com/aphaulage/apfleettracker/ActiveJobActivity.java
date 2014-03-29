@@ -20,6 +20,8 @@ import android.database.Cursor;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.PowerManager;
@@ -47,11 +49,11 @@ GooglePlayServicesClient.OnConnectionFailedListener, LocationListener, com.googl
     // Milliseconds per second
     private static final int MILLISECONDS_PER_SECOND = 1000;
     // Update frequency in seconds
-    public static final int UPDATE_INTERVAL_IN_SECONDS = 10;
+    public static final int UPDATE_INTERVAL_IN_SECONDS = 30;
     // Update frequency in milliseconds
     private static final long UPDATE_INTERVAL = MILLISECONDS_PER_SECOND * UPDATE_INTERVAL_IN_SECONDS;
     // The fastest update frequency, in seconds
-    private static final int FASTEST_INTERVAL_IN_SECONDS = 10;
+    private static final int FASTEST_INTERVAL_IN_SECONDS = 20;
     // A fast frequency ceiling in milliseconds
     private static final long FASTEST_INTERVAL =
             MILLISECONDS_PER_SECOND * FASTEST_INTERVAL_IN_SECONDS;
@@ -61,6 +63,7 @@ GooglePlayServicesClient.OnConnectionFailedListener, LocationListener, com.googl
     LocationClient mLocationClient;
     boolean mUpdatesRequested;
 	
+    Alarm alarm = new Alarm();
 	
 	protected String jobId;
 	protected String jobStatus;
@@ -83,6 +86,8 @@ GooglePlayServicesClient.OnConnectionFailedListener, LocationListener, com.googl
 	DriverLocationsDBAdapter driverLocationsDB;
 	DriverSettingsDBAdapter driverSettingsDB;
 	
+	Boolean firstTrack = false;
+	
 	JsonParser jsonParser = new JsonParser();
 	private static final String updateJobUrl = "http://aphaulage.co.uk/apTracker/jobs/updateActiveJob/";
 	private static final String updateDriverUrl = "http://aphaulage.co.uk/apTracker/drivers/update/";
@@ -93,17 +98,17 @@ GooglePlayServicesClient.OnConnectionFailedListener, LocationListener, com.googl
 	
 	protected double previousLat = 0;
 	protected double previousLng = 0;
-	protected PowerManager.WakeLock mWakeLock; 
+	//protected PowerManager.WakeLock mWakeLock; 
 	LocationManager locationManager;
 	
     @Override
     protected void onStart() {
     	super.onStart();
     	final PowerManager pm = (PowerManager)getSystemService(Context.POWER_SERVICE);
-    	this.mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Wakelock");
+    //	this.mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "Wakelock");
     	
-    	mWakeLock.acquire();
-    	
+    	//mWakeLock.acquire();
+
 
     }
     
@@ -157,7 +162,14 @@ GooglePlayServicesClient.OnConnectionFailedListener, LocationListener, com.googl
 			usersDB.close();
 		}
 		
-
+		driverLocationsDB.open();
+		Cursor driverLocationsNonSynced = driverLocationsDB.getDriverLocationsNotSynced();
+		Log.i("Opening", "opening");
+		for(int i=0; i<driverLocationsNonSynced.getCount();i++){
+			driverLocationsNonSynced.moveToPosition(i);
+			Log.i("DriverLocationsNonSynced", driverLocationsNonSynced.getString(0) + " | " + driverLocationsNonSynced.getString(1) + " | " + driverLocationsNonSynced.getString(2) + " | " + driverLocationsNonSynced.getString(3)); 
+		}
+		driverLocationsDB.close();
 		new UpdateJobStatus().execute();
 		
 		if(mLocationRequest == null){
@@ -266,19 +278,6 @@ GooglePlayServicesClient.OnConnectionFailedListener, LocationListener, com.googl
        timeTravelledTextView = (TextView)findViewById(R.id.active_job_job_time_driving);
        timeTravelledTextView.setText("01:02*");
 
-       driverSettingsDB.open();
-
-       Cursor driverSettingsCursor = driverSettingsDB.getAllDriverSettings();
-       driverSettingsCursor.moveToFirst();
-       trackingEnabled = driverSettingsCursor.getString(0);
-       Log.i("tracking", trackingEnabled);
-       if(trackingEnabled.equals("Yes")){
-    	   //userDrivingSwitch.setChecked(true);
-       }
-       else {
-    	   //userDrivingSwitch.setChecked(false);
-       }
-       driverSettingsDB.close();
 	}
 	
 	   /*
@@ -379,7 +378,6 @@ GooglePlayServicesClient.OnConnectionFailedListener, LocationListener, com.googl
 		
 		@Override
 		protected String doInBackground(String... args) {
-				Log.i("ActiveJobActivity", "Starting Background");
 				try{
 					jobsDB.open();
 					Cursor jobStarted = jobsDB.getJobByParam("ID", jobId);
@@ -388,31 +386,31 @@ GooglePlayServicesClient.OnConnectionFailedListener, LocationListener, com.googl
 					jobParams.add(new BasicNameValuePair("key", "9c36c7108a73324100bc9305f581979071d45ee9"));
 					jobParams.add(new BasicNameValuePair("status", "Active"));
 					jobParams.add(new BasicNameValuePair("modified", jobStarted.getString(13)));
-					Log.i("ActiveJob - Params", jobParams.toString());
 					JSONObject jsonJobsResult = jsonParser.makeHttpRequest(updateJobUrl + jobId + ".json", "POST", jobParams);
-					Log.i("ActiveJobActivity - JsonJobsResult", jsonJobsResult.toString());
 					
 					jobsDB.updateJobRecord("SYNCED", "Yes", jobId);
-					jobsDB.close();
 					
 				}
 				catch(Exception e){
 					e.printStackTrace();
+				}
+				finally {
+					jobsDB.close();
 				}
 				try {
 					List<NameValuePair> driverParams = new ArrayList<NameValuePair>();
 					driverParams.add(new BasicNameValuePair("id", driverId));
 					driverParams.add(new BasicNameValuePair("key", "9c36c7108a73324100bc9305f581979071d45ee9"));
 					driverParams.add(new BasicNameValuePair("available", "Active"));
-					Log.i("ActiveDriver - Params", driverParams.toString());
 					JSONObject jsonDriversResult = jsonParser.makeHttpRequest(updateDriverUrl + driverId + ".json", "POST", driverParams);
-					Log.i("ActiveJobActivity - JsonDriversResult", jsonDriversResult.toString());
 					usersDB.open();
 					usersDB.updateUserRecord("SYNCED", "Yes", driverId);
-					usersDB.close();
 				}
 				catch(Exception e){
 					e.printStackTrace();
+				}
+				finally {
+					usersDB.close();
 				}
 				
 				return null;
@@ -435,7 +433,6 @@ GooglePlayServicesClient.OnConnectionFailedListener, LocationListener, com.googl
 		
 		@Override
 		protected String doInBackground(String... args) {
-				Log.i("AddDriverLocation", "Starting Background");
 				try{
 					driverLocationsDB.open();
 					//Cursor driverLocationsCursor = driverLocationsDB.getDriverLocationsByParam("SYNCED", "No");
@@ -443,8 +440,8 @@ GooglePlayServicesClient.OnConnectionFailedListener, LocationListener, com.googl
 					Cursor driverLocationsCursor = driverLocationsDB.getDriverLocationsNotSynced();
 					//Log.i("cursorAll: ", "count: " + allDriverLocations.getCount());
 					Log.i("cursor", "count: " + driverLocationsCursor.getCount());
-					for(int i=1;i<=driverLocationsCursor.getCount();i++){
-						Log.i("ActiveDriverLocation", "for Loop" + i);
+					for(int i=0;i<=driverLocationsCursor.getCount()-1;i++){
+						JSONObject jsonDriverLocationResult = null;
 						driverLocationsCursor.moveToPosition(i);
 						List<NameValuePair> locationParams = new ArrayList<NameValuePair>();
 						locationParams.add(new BasicNameValuePair("key", "9c36c7108a73324100bc9305f581979071d45ee9"));
@@ -452,23 +449,36 @@ GooglePlayServicesClient.OnConnectionFailedListener, LocationListener, com.googl
 						locationParams.add(new BasicNameValuePair("date_time_stamp", driverLocationsCursor.getString(2)));
 						locationParams.add(new BasicNameValuePair("latitude", driverLocationsCursor.getString(3)));
 						locationParams.add(new BasicNameValuePair("longitude", driverLocationsCursor.getString(4)));
-						
-						Log.i("DriverLocation - Params", locationParams.toString());
-						JSONObject jsonDriverLocationResult = jsonParser.makeHttpRequest(addDriverLocationUrl, "POST", locationParams);
-						Log.i("driverLocationsCursorBefore: ", driverLocationsCursor.getString(5));
-						Log.i("driver location id", "id: " + driverLocationsCursor.getString(0));
-						Log.i("DriverLocationResult - JsonDriverLocationResult", jsonDriverLocationResult.toString());
-						driverLocationsDB.updateDriverLocationRecord("SYNCED", "Yes", driverLocationsCursor.getString(0));
-						Log.i("driverLocationsCursorAfter: ", driverLocationsCursor.getString(5));
+						Log.i("DRIVER_ID", driverLocationsCursor.getString(1));
+						driverLocationsDB.close();
+						if(isNetworkAvailable()==true){
+							try {
+								jsonDriverLocationResult = jsonParser.makeHttpRequest(addDriverLocationUrl, "POST", locationParams);
+								Log.i("jsonDriverLocationResultNew",jsonDriverLocationResult.toString());
+								
+								if(jsonDriverLocationResult.toString().contains("Driver Location Added")){
+									Log.i("Message", "MATCHED");
+									driverLocationsDB.open();
+									driverLocationsDB.updateDriverLocationRecord("SYNCED", "Yes", driverLocationsCursor.getString(0));
+									driverLocationsDB.close();
+								}
+								jsonDriverLocationResult = null;
+							}
+							catch (Exception e){
+								e.printStackTrace();
+							}
+						}
 
 					}
-					driverLocationsDB.close();
+					
+					
 					
 				}
 				catch(Exception e){
 					e.printStackTrace();
 				}
-				
+				finally {
+				}
 				return null;
 			}
 		
@@ -488,7 +498,6 @@ GooglePlayServicesClient.OnConnectionFailedListener, LocationListener, com.googl
 		
 		@Override
 		protected String doInBackground(String... arg0) {
-			Log.i("UpdateJobFinished", "Starting Background");
 			try{
 				//String now = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date());
 				String now = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
@@ -497,31 +506,32 @@ GooglePlayServicesClient.OnConnectionFailedListener, LocationListener, com.googl
 				jobParams.add(new BasicNameValuePair("key", "9c36c7108a73324100bc9305f581979071d45ee9"));
 				jobParams.add(new BasicNameValuePair("status", "Complete"));
 				jobParams.add(new BasicNameValuePair("completed_date", now));
-				Log.i("FinishedJob - Params", jobParams.toString());
 				JSONObject jsonJobsResult = jsonParser.makeHttpRequest(updateJobUrl + jobId + ".json", "POST", jobParams);
-				Log.i("UpdateJobFinished - JsonJobsResult", jsonJobsResult.toString());
 				jobsDB.open();
 				jobsDB.updateJobRecord("SYNCED", "Yes", jobId);
-				jobsDB.close();
 				
 			}
 			catch(Exception e){
 				e.printStackTrace();
 			}
+			finally {
+				jobsDB.close();
+			}
+			
 			try {
 				List<NameValuePair> driverParams = new ArrayList<NameValuePair>();
 				driverParams.add(new BasicNameValuePair("id", driverId));
 				driverParams.add(new BasicNameValuePair("key", "9c36c7108a73324100bc9305f581979071d45ee9"));
 				driverParams.add(new BasicNameValuePair("available", "Available"));
-				Log.i("AvailableDriver - Params", driverParams.toString());
 				JSONObject jsonDriversResult = jsonParser.makeHttpRequest(updateDriverUrl + driverId + ".json", "POST", driverParams);
-				Log.i("AvailableDriver - JsonDriversResult", jsonDriversResult.toString());
 				usersDB.open();
 				usersDB.updateUserRecord("SYNCED", "Yes", driverId);
-				usersDB.close();
 			}
 			catch(Exception e){
 				e.printStackTrace();
+			}
+			finally {
+				usersDB.close();
 			}
 
 			return null;
@@ -584,59 +594,78 @@ Log.i("error", "236");
 	@Override
 	public void onLocationChanged(Location location) {
 		float distanceInMeters = 0;
-		if(previousLat != 0){
+		
 			Location prevLocation = new Location("");
 			prevLocation.setLatitude(previousLat);
 			prevLocation.setLongitude(previousLng);
 			distanceInMeters = location.distanceTo(prevLocation);
 			//44 meters per 20 seconds = 5mph. 
-			//if(distanceInMeters>44){ 			// as the crow flies distance
+			if(distanceInMeters>20){ 			// as the crow flies distance
 				driverLocationsDB.open();
 				SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 				String dateFormatted = s.format(new Date());
 				driverLocationsDB.createDriverLocation(driverId, dateFormatted, location.getLatitude(), location.getLongitude(), "No");
-				driverLocationsDB.close();
-				new AddDriverLocation().execute();
-			//}
+				//driverLocationsDB.close();
+				try {
+					new AddDriverLocation().execute();
+				}
+				catch(Exception e){
+					e.printStackTrace();
+				}
+				finally {
+					driverLocationsDB.close();
+				}
+			}
+		
+		// Log.i("Location changed", "Location changed");
+		 previousLat = location.getLatitude();
+		 previousLng = location.getLongitude();
+		// Log.i("provider: ", location.getProvider());
+		// Log.i("lat", "lat " + location.getLatitude());
+		// Log.i("lng", "lng " + location.getLongitude());
+		
+		// driverLocationsDB.open();
+		/*Cursor nonSync = driverLocationsDB.getDriverLocationsNotSynced();
+		for (int i = 0; i<nonSync.getCount(); i++){
+			Log.i("nonSync", "Record: " + i);
+			nonSync.moveToPosition(i);
+			Log.i("nonSync", "id: " + nonSync.getString(0));
+			Log.i("nonSync", "driverId: " + nonSync.getString(1));
+			Log.i("nonSync", "timestamp: " + nonSync.getString(2));
+			Log.i("nonSync", "lat: " + nonSync.getString(3));
+			Log.i("nonSync", "lng: " + nonSync.getString(4));
 
 		}
-
-		
-		previousLat = location.getLatitude();
-		previousLng = location.getLongitude();
+		driverLocationsDB.close();
+		driverLocationsDB.open();
+		Cursor driverLocationsNonSynced = driverLocationsDB.getDriverLocationsNotSynced();
+		Log.i("Opening", "opening");
+		for(int i=0; i<driverLocationsNonSynced.getCount();i++){
+			driverLocationsNonSynced.moveToPosition(i);
+			Log.i("DriverLocationsNonSynced", driverLocationsNonSynced.getString(0) + " | " + driverLocationsNonSynced.getString(1) + " | " + driverLocationsNonSynced.getString(2) + " | " + driverLocationsNonSynced.getString(3)); 
+			Log.i("DriverLocationsNonSynced", driverLocationsNonSynced.getString(4) + " | " + driverLocationsNonSynced.getString(5));
+		}
+		driverLocationsDB.close();
+		*/
+				driverLocationsDB.open();
+				Cursor allDriverLocations = driverLocationsDB.getAllDriverLocations();
+				for(int i=0; i<allDriverLocations.getCount(); i++){
+					allDriverLocations.moveToPosition(i);
+					Log.i("allLocations", allDriverLocations.getString(0) + " | " + allDriverLocations.getString(5));
+				}
+				driverLocationsDB.close();
 	}
 
 	@Override
 	public void onProviderDisabled(String provider) {
 		// TODO Auto-generated method stub
-		if(provider.equals("LocationManager.GPS_PROVIDER")){
-			Log.i("Active Job Location", "GPS Disabled");
-		}
-		locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-		if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-			//locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-			mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-		} else {
-			//locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
-			mLocationRequest.setPriority(LocationRequest.PRIORITY_LOW_POWER);
-		}
-		mLocationClient.removeLocationUpdates(this);
-		mLocationClient.requestLocationUpdates(mLocationRequest, this);
+		Log.i("disabled", provider);
 	}
 
 	@Override
 	public void onProviderEnabled(String provider) {
 		// TODO Auto-generated method stub
-		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-		if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-			//locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-			mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-		} else {
-			//locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
-			mLocationRequest.setPriority(LocationRequest.PRIORITY_LOW_POWER);
-		}
-		mLocationClient.removeLocationUpdates(this);
-		mLocationClient.requestLocationUpdates(mLocationRequest, this);
+		Log.i("enabled", provider);
 	}
 
 	@Override
@@ -648,10 +677,14 @@ Log.i("error", "236");
 	@Override
 	public void onDestroy(){
 		super.onDestroy();
-		if (mWakeLock.isHeld())
-		{
-		this.mWakeLock.release();
-		}
+
+	}
+	
+	private boolean isNetworkAvailable() {
+	    ConnectivityManager connectivityManager 
+	          = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+	    NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+	    return activeNetworkInfo != null && activeNetworkInfo.isConnected();
 	}
 
 }

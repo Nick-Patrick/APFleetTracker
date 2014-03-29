@@ -20,6 +20,9 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="com.android.alarm.permission.SET_ALARM"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    
 
     <uses-feature
         android:glEsVersion="0x00020000"
@@ -116,6 +119,13 @@
             android:name="com.aphaulage.apfleettracker.InitDataActivity"
             android:label="@string/title_activity_init_data" >
         </activity>
+        
+		<receiver  android:process=":remote" android:name="Alarm"></receiver>
+		<receiver android:name=".AutoStart">
+    		<intent-filter>
+        		<action android:name="android.intent.action.BOOT_COMPLETED"></action>
+    		</intent-filter>
+		</receiver>
     </application>
 
 </manifest>

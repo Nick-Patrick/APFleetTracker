@@ -44,7 +44,7 @@
             android:layout_below="@+id/active_job_job_time_driving_label"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="14dp"
-            android:text="00:00"
+            android:text="24Mar"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
 

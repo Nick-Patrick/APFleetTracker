@@ -472,11 +472,14 @@ public class StartDayActivity extends Activity {
 					List<NameValuePair> locationParams = new ArrayList<NameValuePair>();
 					locationParams.add(new BasicNameValuePair("key", "9c36c7108a73324100bc9305f581979071d45ee9"));
 					locationParams.add(new BasicNameValuePair("driver_id", unsyncedDriverLocationRecords.getString(1)));
+					locationParams.add(new BasicNameValuePair("date_time_stamp", unsyncedDriverLocationRecords.getString(2)));
 					locationParams.add(new BasicNameValuePair("latitude", unsyncedDriverLocationRecords.getString(3)));
 					locationParams.add(new BasicNameValuePair("longitude", unsyncedDriverLocationRecords.getString(4)));
 					
 					JSONObject jsonDriverLocationResult = jsonParser.makeHttpRequest(addDriverLocationUrl, "POST", locationParams);
-					driverLocationsDB.updateDriverLocationRecord("SYNCED", "Yes", unsyncedDriverLocationRecords.getString(0));
+					if(jsonDriverLocationResult.toString().contains("Driver Location Added")){
+						driverLocationsDB.updateDriverLocationRecord("SYNCED", "Yes", unsyncedDriverLocationRecords.getString(0));
+					}
 					Log.i("jsonDriverLocaitonResult", jsonDriverLocationResult.toString());
 				}
 				driverLocationsDB.close();

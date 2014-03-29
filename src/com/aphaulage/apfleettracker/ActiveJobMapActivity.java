@@ -152,8 +152,8 @@ public class ActiveJobMapActivity extends Activity  {
 		            	if(driverLocation.getCount() > 0){
 			            	driverLocation.moveToLast();
 			            	driverLocationsDB.close();
-			            	float driverLat = Float.parseFloat(driverLocation.getString(2));
-			            	float driverLng = Float.parseFloat(driverLocation.getString(3));
+			            	float driverLat = Float.parseFloat(driverLocation.getString(3));
+			            	float driverLng = Float.parseFloat(driverLocation.getString(4));
 			            	Log.i("running", "lat: " + driverLat);
 			            	Log.i("running", "lng: " + driverLng);
 			            	mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(driverLat, driverLng), 9));

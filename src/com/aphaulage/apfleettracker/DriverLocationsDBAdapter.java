@@ -90,7 +90,7 @@ public class DriverLocationsDBAdapter {
 	
 	//Return cursor of all driver locations.
 	public Cursor getAllDriverLocations(){
-		return this.mDb.query(DATABASE_TABLE, new String[] {_ID, DRIVER_ID, LATITUDE, LONGITUDE, SYNCED},
+		return this.mDb.query(DATABASE_TABLE, new String[] {_ID, DRIVER_ID, DATE_TIME_STAMP, LATITUDE, LONGITUDE, SYNCED},
 				null,null,null,null,null);
 	}
 	
@@ -118,6 +118,7 @@ public class DriverLocationsDBAdapter {
 				"SYNCED = 'No'",null,null,null,null);
 	}
 	
+
 	public boolean updateDriverLocationRecord(String column, String value, String id){
 		ContentValues args = new ContentValues();
 		Locale l = new Locale("en_GB");
