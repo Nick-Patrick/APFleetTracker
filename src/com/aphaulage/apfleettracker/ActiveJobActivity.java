@@ -36,6 +36,8 @@ import android.widget.Button;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.app.PendingIntent;
+
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
@@ -46,6 +48,12 @@ import com.google.android.gms.location.LocationRequest;
 public class ActiveJobActivity extends Activity implements GooglePlayServicesClient.ConnectionCallbacks,
 GooglePlayServicesClient.OnConnectionFailedListener, LocationListener, com.google.android.gms.location.LocationListener  {
 
+	
+	private Intent mIntentService;
+	 private PendingIntent mPendingIntent;
+	  
+
+	
     // Milliseconds per second
     private static final int MILLISECONDS_PER_SECOND = 1000;
     // Update frequency in seconds
@@ -55,8 +63,7 @@ GooglePlayServicesClient.OnConnectionFailedListener, LocationListener, com.googl
     // The fastest update frequency, in seconds
     private static final int FASTEST_INTERVAL_IN_SECONDS = 20;
     // A fast frequency ceiling in milliseconds
-    private static final long FASTEST_INTERVAL =
-            MILLISECONDS_PER_SECOND * FASTEST_INTERVAL_IN_SECONDS;
+    private static final long FASTEST_INTERVAL = MILLISECONDS_PER_SECOND * FASTEST_INTERVAL_IN_SECONDS;
 
     // Define an object that holds accuracy and frequency parameters
     LocationRequest mLocationRequest;
@@ -139,6 +146,34 @@ GooglePlayServicesClient.OnConnectionFailedListener, LocationListener, com.googl
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_active_job);
 		
+		
+	       if(mLocationClient == null){
+	    	   mLocationClient = new LocationClient(this, this, this);
+	    	   //mUpdatesRequested = true;
+	    	   Log.i("ActiveJobActivity", "mLocationClient created");
+	       }
+	       if(!mLocationClient.isConnected()){
+	    	   mLocationClient.connect();
+	    	   Log.i("ActiveJobActivity", "mLocationClient connecting");
+	       }
+	       //mUpdatesRequested = true;
+	       
+	      if(mLocationRequest == null){
+				//Create LocationRequest object.
+		        mLocationRequest = LocationRequest.create();
+		        // Use high accuracy
+		       // mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+		        // Set the update interval to 5 seconds
+		        mLocationRequest.setInterval(UPDATE_INTERVAL);
+		        // Set the fastest update interval to 1 second
+		        mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
+			}
+			
+		
+		mIntentService = new Intent(this,LocationTrackingService.class);
+		mPendingIntent = PendingIntent.getService(this, 1, mIntentService, 0);
+		
+		
 		// Show the Up button in the action bar.
 		setupActionBar();
 		usersDB = new UsersDBAdapter(getApplicationContext());
@@ -162,33 +197,11 @@ GooglePlayServicesClient.OnConnectionFailedListener, LocationListener, com.googl
 			usersDB.close();
 		}
 		
-		driverLocationsDB.open();
-		Cursor driverLocationsNonSynced = driverLocationsDB.getDriverLocationsNotSynced();
-		Log.i("Opening", "opening");
-		for(int i=0; i<driverLocationsNonSynced.getCount();i++){
-			driverLocationsNonSynced.moveToPosition(i);
-			Log.i("DriverLocationsNonSynced", driverLocationsNonSynced.getString(0) + " | " + driverLocationsNonSynced.getString(1) + " | " + driverLocationsNonSynced.getString(2) + " | " + driverLocationsNonSynced.getString(3)); 
-		}
-		driverLocationsDB.close();
+		
 		new UpdateJobStatus().execute();
 		
-		if(mLocationRequest == null){
-			//Create LocationRequest object.
-	        mLocationRequest = LocationRequest.create();
-	        // Use high accuracy
-	        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-	        // Set the update interval to 5 seconds
-	        mLocationRequest.setInterval(UPDATE_INTERVAL);
-	        // Set the fastest update interval to 1 second
-	        mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
-		}
-       /* Create a new location client, using the enclosing class to
-        * handle callbacks.
-        */
-       if(mLocationClient == null){
-    	   mLocationClient = new LocationClient(this, this, this);
-    	   mUpdatesRequested = true;
-       }
+		
+       
        
        completedJobButton = (Button)findViewById(R.id.active_job_complete_job_button);
        completedJobButton.setOnClickListener(new OnClickListener(){
@@ -211,6 +224,7 @@ GooglePlayServicesClient.OnConnectionFailedListener, LocationListener, com.googl
 			             * The current Activity is the listener, so
 			             * the argument is "this".
 			             */
+			        	mLocationClient.removeLocationUpdates(mPendingIntent);
     			        mLocationClient.disconnect();	
 			        } 
 		            mUpdatesRequested = false;
@@ -251,10 +265,8 @@ GooglePlayServicesClient.OnConnectionFailedListener, LocationListener, com.googl
 			}
 		
        });
-       if(!mLocationClient.isConnected()){
-    	   mLocationClient.connect();
-       }
-		mUpdatesRequested = true;
+      
+		
        
        moreDetailsTextView = (TextView)findViewById(R.id.active_job_job_name);
        moreDetailsTextView.setOnClickListener(new OnClickListener(){
@@ -579,9 +591,9 @@ Log.i("error", "236");
 	public void onConnected(Bundle arg0) {
 		// TODO Auto-generated method stub
         Toast.makeText(this, "Connected", Toast.LENGTH_SHORT).show();
-        if (mUpdatesRequested) {
-            mLocationClient.requestLocationUpdates(mLocationRequest, this);
-        }
+        //if (mUpdatesRequested) {
+    		mLocationClient.requestLocationUpdates(mLocationRequest, mPendingIntent);
+        //}
 	}
 
 	@Override
@@ -594,8 +606,8 @@ Log.i("error", "236");
 	@Override
 	public void onLocationChanged(Location location) {
 		float distanceInMeters = 0;
-		
-			Location prevLocation = new Location("");
+		Toast.makeText(getApplicationContext(), "Location Changed", Toast.LENGTH_SHORT).show();
+			/*(Location prevLocation = new Location("");
 			prevLocation.setLatitude(previousLat);
 			prevLocation.setLongitude(previousLng);
 			distanceInMeters = location.distanceTo(prevLocation);
@@ -623,6 +635,7 @@ Log.i("error", "236");
 		// Log.i("provider: ", location.getProvider());
 		// Log.i("lat", "lat " + location.getLatitude());
 		// Log.i("lng", "lng " + location.getLongitude());
+		*/
 		
 		// driverLocationsDB.open();
 		/*Cursor nonSync = driverLocationsDB.getDriverLocationsNotSynced();
@@ -647,6 +660,7 @@ Log.i("error", "236");
 		}
 		driverLocationsDB.close();
 		*/
+		/*
 				driverLocationsDB.open();
 				Cursor allDriverLocations = driverLocationsDB.getAllDriverLocations();
 				for(int i=0; i<allDriverLocations.getCount(); i++){
@@ -654,8 +668,10 @@ Log.i("error", "236");
 					Log.i("allLocations", allDriverLocations.getString(0) + " | " + allDriverLocations.getString(5));
 				}
 				driverLocationsDB.close();
+		*/
 	}
 
+	
 	@Override
 	public void onProviderDisabled(String provider) {
 		// TODO Auto-generated method stub
@@ -686,6 +702,7 @@ Log.i("error", "236");
 	    NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
 	    return activeNetworkInfo != null && activeNetworkInfo.isConnected();
 	}
+	
 
 }
 
